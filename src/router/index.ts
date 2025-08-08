@@ -14,6 +14,10 @@ const router = createRouter({
       path: "/timeLine",
       component: () => import("@/views/timeLine/index.vue"),
     },
+      {
+      path: "/message",
+      component: () => import("@/views/messageView/index.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };
