@@ -1,5 +1,5 @@
 import http from "../axios";
-const CHARACTER_KEY = 'yeqi'; // 当前角色标识，可根据路由或上下文动态获取
+const CHARACTER_KEY = 'hui'; // 当前角色标识，可根据路由或上下文动态获取
 /**
  * @function 获取留言列表（分页）
  * @param {object} params - 例如：{ page: 1, pageSize: 10 }
