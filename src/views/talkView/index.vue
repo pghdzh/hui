@@ -443,7 +443,7 @@ onBeforeUnmount(() => {
       z-index: 10;
 
       &.bot {
-        background-image: url("@/assets/chtholly-avatar2.webp");
+        background-image: url("@/assets/megumi_kato.png");
         box-shadow: 0 0 14px #a4d9f9;
 
       }

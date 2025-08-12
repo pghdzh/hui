@@ -9,20 +9,9 @@
         </button>
       </div>
       <div class="gallery-grid">
-        <div
-          v-for="(img, index) in images"
-          :key="img.id"
-          class="card"
-          @click="openLightbox(index)"
-          ref="cards"
-        >
+        <div v-for="(img, index) in images" :key="img.id" class="card" @click="openLightbox(index)" ref="cards">
           <div class="card-inner">
-            <img
-              :src="img.src"
-              :alt="img.alt"
-              loading="lazy"
-              @load="onImageLoad($event)"
-            />
+            <img :src="img.src" :alt="img.alt" loading="lazy" @load="onImageLoad($event)" />
             <div class="overlay">
               <span>查看大图</span>
             </div>
@@ -46,12 +35,7 @@
       </div>
       <transition name="fade">
         <ul v-if="expanded" class="ranking-list">
-          <li
-            v-for="(item, idx) in rankingList"
-            :key="idx"
-            class="ranking-item"
-            :class="`rank-${idx + 1}`"
-          >
+          <li v-for="(item, idx) in rankingList" :key="idx" class="ranking-item" :class="`rank-${idx + 1}`">
             <span class="rank">{{ idx + 1 }}</span>
             <span class="name">{{ item.nickname }}</span>
             <span class="count">{{ item.count }} 张</span>
@@ -68,17 +52,13 @@
     </div>
 
     <!-- 上传弹窗 -->
-    <div
-      v-if="uploadModalOpen"
-      class="upload-modal-overlay"
-      @click.self="closeUploadModal"
-    >
+    <div v-if="uploadModalOpen" class="upload-modal-overlay" @click.self="closeUploadModal">
       <div class="upload-modal">
         <h3>批量上传图片</h3>
         <div class="tip-container">
           <ul class="tips-list">
             <li>
-              审核规则：1.不要 AI 图 2.不要色情倾向 3.要我能认出是珂朵莉。
+              审核规则：1.不要 AI 图 2.不要色情倾向 3.要我能认出是惠惠。
             </li>
             <li>
               由于没有用户系统，我这边不好做审核反馈，但只要显示上传成功，我这边肯定能收到。
@@ -98,13 +78,7 @@
         </label>
         <label>
           选择图片（最多 {{ remaining }} 张）：
-          <input
-            ref="fileInput"
-            type="file"
-            multiple
-            accept="image/*"
-            @change="handleFileSelect"
-          />
+          <input ref="fileInput" type="file" multiple accept="image/*" @change="handleFileSelect" />
         </label>
         <p class="tip" v-if="selectedFiles.length">
           已选 {{ selectedFiles.length }} 张
@@ -119,13 +93,8 @@
     </div>
 
     <div class="floating-chibis">
-      <img
-        v-for="(pet, i) in chibiList"
-        :key="i"
-        :src="pet.src"
-        :style="{ top: pet.top + 'px', left: pet.left + 'px' }"
-        class="chibi-img"
-      />
+      <img v-for="(pet, i) in chibiList" :key="i" :src="pet.src" :style="{ top: pet.top + 'px', left: pet.left + 'px' }"
+        class="chibi-img" />
     </div>
   </div>
 </template>
@@ -204,7 +173,7 @@ const page = 1;
 const pageSize = 99;
 
 const fetchRanking = async () => {
-  const res = await getRankingList({ page, pageSize, character_key: "kdl" });
+  const res = await getRankingList({ page, pageSize, character_key: "hui" });
   if (res.success) {
     rankingList.value = res.data;
   } else {
@@ -251,7 +220,7 @@ async function loadNextPage() {
       page: pageImage.value,
       limit: limit.value,
       sortBy: sortBy.value,
-      character_key: "kdl",
+      character_key: "hui",
       order: order.value,
     });
     const likedIds = getLikedIds();
@@ -412,7 +381,7 @@ async function submitUpload() {
     const res = await uploadImages(
       selectedFiles.value,
       nickname.value.trim(),
-      "kdl"
+      "hui"
     );
     const uploadedCount = res.data.length;
     // 更新 localStorage
@@ -458,104 +427,104 @@ onMounted(async () => {
   if (sentinel.value) {
     sentinelObserver.observe(sentinel.value);
   }
-  // 1. 基础配置信息
-  const total = 6; // 总共 9 张图（编号 1～9）
-  const pickCount = 3; // 每次抽取 3 张
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
+  // // 1. 基础配置信息
+  // const total = 6; // 总共 9 张图（编号 1～9）
+  // const pickCount = 3; // 每次抽取 3 张
+  // const vw = window.innerWidth;
+  // const vh = window.innerHeight;
 
-  // 如果已知单张小人图片的宽高，可避免超出边界；
-  // 假设小人图片宽 100px、高 100px，按需替换：
-  const imgWidth = 100;
-  const imgHeight = 100;
+  // // 如果已知单张小人图片的宽高，可避免超出边界；
+  // // 假设小人图片宽 100px、高 100px，按需替换：
+  // const imgWidth = 100;
+  // const imgHeight = 100;
 
-  // 2. Fisher–Yates 洗牌函数
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
-    }
-    return array;
-  }
+  // // 2. Fisher–Yates 洗牌函数
+  // function shuffle(array) {
+  //   for (let i = array.length - 1; i > 0; i--) {
+  //     const j = Math.floor(Math.random() * (i + 1));
+  //     [array[i], array[j]] = [array[j], array[i]];
+  //   }
+  //   return array;
+  // }
 
-  // 3. 随机选出 3 个编号
-  const nums = shuffle(Array.from({ length: total }, (_, k) => k + 1));
-  const picks = nums.slice(0, pickCount);
+  // // 3. 随机选出 3 个编号
+  // const nums = shuffle(Array.from({ length: total }, (_, k) => k + 1));
+  // const picks = nums.slice(0, pickCount);
 
-  // 4. 生成随机位置并填充 chibiList
-  chibiList.value = []; // 先清空
-  picks.forEach((i) => {
-    chibiList.value.push({
-      src: `/QImages/1 (${i}).png`,
-      left: Math.random() * (vw - imgWidth), // 保证不超出左右边界
-      top: Math.random() * (vh - imgHeight), // 保证不超出上下边界
-    });
-  });
+  // // 4. 生成随机位置并填充 chibiList
+  // chibiList.value = []; // 先清空
+  // picks.forEach((i) => {
+  //   chibiList.value.push({
+  //     src: `/QImages/1 (${i}).png`,
+  //     left: Math.random() * (vw - imgWidth), // 保证不超出左右边界
+  //     top: Math.random() * (vh - imgHeight), // 保证不超出上下边界
+  //   });
+  // });
 
-  // 2. 等 img 渲染到 DOM
-  await nextTick();
+  // // 2. 等 img 渲染到 DOM
+  // await nextTick();
 
-  // 3. 给每个小人绑定 GSAP 动画
-  const imgs = document.querySelectorAll<HTMLImageElement>(".chibi-img");
-  imgs.forEach((img, index) => {
-    const padding = 200; // 边缘预留空间
-    // ✅ 初始出场动画（闪现）
-    gsap.fromTo(
-      img,
-      { opacity: 0, scale: 0.5 },
-      {
-        opacity: 1,
-        scale: 1,
-        duration: 0.8,
-        ease: "back.out(2)",
-        delay: 0.2 * index,
-      }
-    );
+  // // 3. 给每个小人绑定 GSAP 动画
+  // const imgs = document.querySelectorAll<HTMLImageElement>(".chibi-img");
+  // imgs.forEach((img, index) => {
+  //   const padding = 200; // 边缘预留空间
+  //   // ✅ 初始出场动画（闪现）
+  //   gsap.fromTo(
+  //     img,
+  //     { opacity: 0, scale: 0.5 },
+  //     {
+  //       opacity: 1,
+  //       scale: 1,
+  //       duration: 0.8,
+  //       ease: "back.out(2)",
+  //       delay: 0.2 * index,
+  //     }
+  //   );
 
-    // ✅ 鼠标靠近闪避
-    img.addEventListener("mouseenter", () => {
-      gsap.killTweensOf(img);
+  //   // ✅ 鼠标靠近闪避
+  //   img.addEventListener("mouseenter", () => {
+  //     gsap.killTweensOf(img);
 
-      gsap.to(img, {
-        x: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
-        y: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
-        duration: 1.2,
-        ease: "back.out(2)",
-        onComplete: () => {
-          // 闪避完成后，再重新启用动画
-          animate(img);
-        },
-      });
-    });
+  //     gsap.to(img, {
+  //       x: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
+  //       y: "+=" + ((Math.random() - 0.5) * 400).toFixed(0),
+  //       duration: 1.2,
+  //       ease: "back.out(2)",
+  //       onComplete: () => {
+  //         // 闪避完成后，再重新启用动画
+  //         animate(img);
+  //       },
+  //     });
+  //   });
 
-    const animate = (img: HTMLImageElement) => {
-      let { x, y } = img.getBoundingClientRect();
-      let deltaX = (Math.random() - 0.5) * 200;
-      let deltaY = (Math.random() - 0.5) * 200;
+  //   const animate = (img: HTMLImageElement) => {
+  //     let { x, y } = img.getBoundingClientRect();
+  //     let deltaX = (Math.random() - 0.5) * 200;
+  //     let deltaY = (Math.random() - 0.5) * 200;
 
-      // 预测一下偏移后的位置
-      let nextX = x + deltaX;
-      let nextY = y + deltaY;
+  //     // 预测一下偏移后的位置
+  //     let nextX = x + deltaX;
+  //     let nextY = y + deltaY;
 
-      // 校正：防漂出左、右、上、下边界
-      if (nextX < padding) deltaX = padding - x;
-      if (nextX + img.width > window.innerWidth - padding)
-        deltaX = window.innerWidth - padding - (x + img.width);
-      if (nextY < padding) deltaY = padding - y;
-      if (nextY + img.height > window.innerHeight - padding)
-        deltaY = window.innerHeight - padding - (y + img.height);
+  //     // 校正：防漂出左、右、上、下边界
+  //     if (nextX < padding) deltaX = padding - x;
+  //     if (nextX + img.width > window.innerWidth - padding)
+  //       deltaX = window.innerWidth - padding - (x + img.width);
+  //     if (nextY < padding) deltaY = padding - y;
+  //     if (nextY + img.height > window.innerHeight - padding)
+  //       deltaY = window.innerHeight - padding - (y + img.height);
 
-      gsap.to(img, {
-        x: `+=${deltaX.toFixed(0)}`,
-        y: `+=${deltaY.toFixed(0)}`,
-        rotation: `+=${((Math.random() - 0.5) * 60).toFixed(0)}`,
-        duration: 2 + Math.random() * 2,
-        ease: "power1.inOut",
-        onComplete: () => animate(img),
-      });
-    };
-    animate(img);
-  });
+  //     gsap.to(img, {
+  //       x: `+=${deltaX.toFixed(0)}`,
+  //       y: `+=${deltaY.toFixed(0)}`,
+  //       rotation: `+=${((Math.random() - 0.5) * 60).toFixed(0)}`,
+  //       duration: 2 + Math.random() * 2,
+  //       ease: "power1.inOut",
+  //       onComplete: () => animate(img),
+  //     });
+  //   };
+  //   animate(img);
+  // });
 });
 
 onBeforeUnmount(() => {
@@ -615,57 +584,102 @@ $highlight: #ffd700;
       margin: 16px 0;
 
       .sort-btn {
-        padding: 8px 24px;
-        background: linear-gradient(135deg, #a2cffe 0%, #486ea4 80%);
-        color: #f0f8ff;
-        border: none;
-        border-radius: 28px;
-        cursor: pointer;
+        /* 基础布局 */
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 10px 28px 10px 48px;
+        /* 留出左侧装饰空间 */
         font-size: 1rem;
-        font-family: "Helvetica Neue", sans-serif;
-        box-shadow: 0 6px 18px rgba(72, 110, 164, 0.6),
-          0 0 8px rgba(162, 207, 254, 0.5);
+        line-height: 1;
+        font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+        cursor: pointer;
+        border-radius: 28px;
         position: relative;
         overflow: hidden;
-        transition: transform 0.2s, box-shadow 0.3s, background 0.4s;
-      }
+        border: 1px solid rgba(160, 139, 126, 0.14);
 
-      .sort-btn::after {
-        content: "";
-        position: absolute;
-        left: -50%;
-        top: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(
-          circle at center,
-          rgba(255, 100, 120, 0.4),
-          transparent 60%
-        );
-        opacity: 0;
-        transform: scale(0.5);
-        transition: opacity 0.4s, transform 0.4s;
-      }
+        /* 颜色与质感（奶油 + 淡粉）*/
+        background: linear-gradient(180deg, #fff7f2 0%, #ffeef3 100%);
+        color: #5b463f;
+        /* 暗棕色，保证文字可读性 */
 
-      .sort-btn:hover {
-        transform: scale(1.05);
-        background: linear-gradient(135deg, #d0708c 20%, #8c325a 100%);
-        color: #ffe4eb;
-        box-shadow: 0 8px 28px rgba(208, 112, 140, 0.8),
-          0 0 12px rgba(255, 100, 120, 0.7);
-      }
+        /* 柔和阴影，带一点内阴影显得像纸片 */
+        box-shadow:
+          0 8px 20px rgba(100, 80, 70, 0.08),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
-      .sort-btn:hover::after {
-        opacity: 1;
-        transform: scale(1);
-      }
+        transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.28s ease, color 0.18s;
 
-      .sort-btn:active {
-        transform: scale(0.98);
-        box-shadow: 0 4px 12px rgba(72, 110, 164, 0.4),
-          0 0 6px rgba(162, 207, 254, 0.3);
+        /* 左侧小心形 / 装饰 */
+        &::before {
+          content: "❤";
+          position: absolute;
+          left: 12px;
+          top: 50%;
+          transform: translateY(-50%);
+          width: 28px;
+          height: 28px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          border-radius: 50%;
+          font-size: 12px;
+          line-height: 1;
+          color: #a86c66;
+          background: linear-gradient(180deg, #ffdfe6 0%, #fff7f2 100%);
+          box-shadow: 0 3px 8px rgba(168, 108, 102, 0.12);
+          pointer-events: none;
+        }
+
+        /* 轻柔高光（hover 时显现）*/
+        &::after {
+          content: "";
+          position: absolute;
+          left: -30%;
+          top: -40%;
+          width: 160%;
+          height: 120%;
+          background: linear-gradient(120deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.02));
+          transform: rotate(18deg);
+          opacity: 0;
+          transition: opacity 0.45s ease, transform 0.45s ease;
+          pointer-events: none;
+        }
+
+        /* hover 效果：微微抬起，颜色变暖，光泽出现 */
+        &:hover {
+          transform: translateY(-4px);
+          background: linear-gradient(180deg, #fff1ef 0%, #ffdfe6 100%);
+          color: #4a352f;
+          box-shadow:
+            0 14px 34px rgba(168, 108, 102, 0.12),
+            inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        &:hover::after {
+          opacity: 1;
+          transform: rotate(18deg) translateY(6px);
+        }
+
+        /* active（按下）手感 */
+        &:active {
+          transform: translateY(-1px) scale(0.995);
+          box-shadow:
+            0 6px 14px rgba(100, 80, 70, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+
+        /* 键盘聚焦可见性（可访问） */
+        &:focus-visible {
+          outline: none;
+          box-shadow:
+            0 0 0 4px rgba(255, 223, 228, 0.28),
+            0 8px 22px rgba(100, 80, 70, 0.08);
+        }
       }
     }
+
 
     .gallery-grid {
       display: grid;
@@ -682,6 +696,7 @@ $highlight: #ffd700;
         }
 
         &.loaded {
+
           // Blur-up & grayscale removed
           .card-inner img {
             filter: none;
@@ -869,63 +884,76 @@ $highlight: #ffd700;
     }
   }
 
-  /* 上传按钮  */
+  /* 上传按钮 — 加藤惠风格 */
   .upload-btn {
     position: fixed;
     bottom: 24px;
     right: 24px;
-    padding: 14px 24px;
-    background: linear-gradient(135deg, #a4d9f9, #2f3f6b);
-    color: #f0f8ff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
     font-size: 1rem;
-    font-family: "Helvetica Neue", sans-serif;
-    border: none;
-    border-radius: 30px;
-    box-shadow: 0 8px 30px rgba(46, 75, 153, 0.6),
-      0 0 8px rgba(164, 217, 249, 0.4);
+    font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
+    color: #5b463f;
+    /* 暗棕，保证可读 */
+    background: linear-gradient(180deg, #fff7f2 0%, #ffeef3 100%);
+    /* 奶油 + 淡粉 */
+    border: 1px solid rgba(88, 62, 53, 0.06);
+    border-radius: 28px;
+    box-shadow:
+      0 10px 26px rgba(88, 62, 53, 0.06),
+      /* 柔和外阴影 */
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    /* 纸张高光 */
     cursor: pointer;
-    transition: transform 0.2s, box-shadow 0.3s, background 0.3s;
+    transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.25s ease, color 0.18s;
     z-index: 10;
 
-    &:hover {
-      transform: scale(1.1);
-      background: linear-gradient(135deg, #d16ba5, #a03070);
-      color: #ffe4eb;
-      box-shadow: 0 12px 40px rgba(209, 107, 165, 0.7),
-        0 0 12px rgba(255, 100, 120, 0.9);
-    }
 
-    &:active {
-      transform: scale(0.95);
-      box-shadow: 0 4px 16px rgba(46, 75, 153, 0.4),
-        0 0 6px rgba(164, 217, 249, 0.3);
-    }
-
+    /* 轻柔高光层，hover 时显现 */
     &::after {
       content: "";
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      background: radial-gradient(
-        circle at center,
-        rgba(255, 100, 120, 0.3),
-        transparent 60%
-      );
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.02));
       opacity: 0;
-      transition: opacity 0.4s, transform 0.4s;
-      transform: scale(0.5);
+      transform: translateY(-6px);
+      transition: opacity 0.38s ease, transform 0.38s ease;
+      pointer-events: none;
+    }
+
+    /* hover：微抬起、颜色变暖、高光出现 */
+    &:hover {
+      transform: translateY(-4px);
+      background: linear-gradient(180deg, #fff1ef 0%, #ffdfe6 100%);
+      color: #47332c;
+      box-shadow:
+        0 16px 40px rgba(168, 108, 102, 0.09),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 
     &:hover::after {
       opacity: 1;
-      transform: scale(1);
+      transform: translateY(0);
     }
+
+    /* active：按下的轻微回弹手感 */
+    &:active {
+      transform: translateY(-2px) scale(0.995);
+      box-shadow:
+        0 8px 18px rgba(88, 62, 53, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    }
+
   }
+
 
   .upload-modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 5, 40, 0.9);
+    background: rgba(50, 40, 35, 0.85); // 柔和棕咖背景
     backdrop-filter: blur(6px);
     display: flex;
     align-items: center;
@@ -934,22 +962,22 @@ $highlight: #ffd700;
   }
 
   .upload-modal {
-    background: rgba(20, 20, 60, 0.85);
+    background: rgba(255, 250, 245, 0.95); // 米白暖色底
     padding: 36px;
     border-radius: 18px;
     width: 660px;
-    color: #e9eef8;
-    box-shadow: 0 12px 40px rgba(46, 75, 153, 0.6);
-    border: 1px solid rgba(164, 217, 249, 0.4);
+    color: #5c4a3d; // 深棕文字
+    box-shadow: 0 12px 40px rgba(90, 70, 60, 0.3);
+    border: 1px solid rgba(200, 180, 160, 0.4);
     position: relative;
     font-family: "Helvetica Neue", sans-serif;
 
     h3 {
       margin-bottom: 16px;
       font-size: 1.6rem;
-      color: #a4d9f9;
+      color: #c78f7b; // 奶茶粉标题
       text-align: center;
-      text-shadow: 0 0 8px rgba(164, 217, 249, 0.8);
+      text-shadow: 0 0 4px rgba(230, 200, 180, 0.4);
     }
 
     .stats {
@@ -958,15 +986,15 @@ $highlight: #ffd700;
       text-align: center;
 
       strong {
-        color: #d16ba5;
+        color: #e6a5a0; // 淡粉
       }
     }
 
     .tip-container {
       margin-top: 20px;
       padding: 16px 20px;
-      background: rgba(164, 217, 249, 0.1);
-      border-left: 4px solid #a4d9f9;
+      background: rgba(230, 200, 180, 0.15);
+      border-left: 4px solid #c78f7b;
       border-radius: 8px;
 
       .tips-list {
@@ -979,17 +1007,18 @@ $highlight: #ffd700;
           padding-left: 28px;
           margin-bottom: 10px;
           font-size: 0.95rem;
-          color: #eff4ff;
+          color: #5c4a3d;
 
           &::before {
-            content: "✧";
+            content: "♡";
             position: absolute;
             left: 0;
             top: 0;
-            font-size: 1.2rem;
-            color: #a4d9f9;
-            text-shadow: 0 0 4px rgba(164, 217, 249, 0.6);
+            font-size: 1.1rem;
+            color: #c78f7b;
+            text-shadow: 0 0 2px rgba(200, 160, 140, 0.4);
           }
+
           &:last-child {
             margin-bottom: 0;
           }
@@ -1001,7 +1030,7 @@ $highlight: #ffd700;
       margin-top: 10px;
       text-align: right;
       font-size: 0.9rem;
-      color: #eff4ff;
+      color: #7a6254;
     }
 
     label {
@@ -1015,16 +1044,16 @@ $highlight: #ffd700;
         margin-top: 8px;
         padding: 10px 12px;
         border-radius: 8px;
-        border: 1px solid #555;
-        background: rgba(255, 255, 255, 0.05);
-        color: #e9eef8;
+        border: 1px solid #c0a890;
+        background: rgba(255, 255, 255, 0.9);
+        color: #5c4a3d;
         font-size: 0.95rem;
         outline: none;
         transition: border-color 0.2s, box-shadow 0.2s;
 
         &:focus {
-          border-color: #d16ba5;
-          box-shadow: 0 0 6px rgba(209, 107, 165, 0.5);
+          border-color: #e6a5a0;
+          box-shadow: 0 0 6px rgba(230, 165, 160, 0.4);
         }
       }
     }
@@ -1045,18 +1074,17 @@ $highlight: #ffd700;
         transition: background 0.3s, box-shadow 0.3s;
 
         &:not(.cancel) {
-          background: linear-gradient(135deg, #a4d9f9, #2f3f6b);
-          color: #f0f8ff;
-          box-shadow: 0 6px 20px rgba(46, 75, 153, 0.6);
+          background: linear-gradient(135deg, #f3d6c6, #c78f7b); // 米粉渐变
+          color: #fff8f5;
+          box-shadow: 0 6px 20px rgba(200, 160, 140, 0.4);
 
           &:hover:not(:disabled) {
-            background: linear-gradient(135deg, #d16ba5, #a03070);
-            color: #ffe4eb;
-            box-shadow: 0 8px 30px rgba(209, 107, 165, 0.8);
+            background: linear-gradient(135deg, #e6a5a0, #b87b6a);
+            box-shadow: 0 8px 30px rgba(200, 140, 120, 0.5);
           }
 
           &:disabled {
-            background: #444;
+            background: #c8b0a0;
             cursor: not-allowed;
             box-shadow: none;
           }
@@ -1064,30 +1092,34 @@ $highlight: #ffd700;
 
         &.cancel {
           background: transparent;
-          border: 2px solid #eff4ff;
-          color: #eff4ff;
+          border: 2px solid #b89f8e;
+          color: #7a6254;
 
           &:hover {
-            background: rgba(209, 107, 165, 0.2);
+            background: rgba(200, 160, 140, 0.15);
           }
         }
       }
     }
   }
 
+
   .ranking-panel {
     width: 220px;
     padding: 16px;
-    background: rgba(15, 20, 50, 0.8);
+    background: rgba(255, 247, 242, 0.9);
+    /* 奶油底色 + 半透明 */
     backdrop-filter: blur(6px);
     border-radius: 18px;
-    box-shadow: 0 8px 30px rgba(46, 75, 153, 0.6),
-      0 0 12px rgba(164, 217, 249, 0.4);
+    border: 1px solid rgba(88, 62, 53, 0.08);
+    box-shadow:
+      0 8px 20px rgba(88, 62, 53, 0.06),
+      inset 0 1px 0 rgba(255, 255, 255, 0.6);
     position: fixed;
     top: 84px;
     right: 12px;
-    color: #e9eef8;
-    font-family: "Helvetica Neue", sans-serif;
+    color: #5b463f;
+    font-family: "PingFang SC", "Noto Sans SC", "Helvetica Neue", sans-serif;
 
     &.collapsed {
       height: auto;
@@ -1101,18 +1133,20 @@ $highlight: #ffd700;
       cursor: pointer;
 
       .ranking-title {
-        font-size: 1.4rem;
-        color: #a4d9f9;
-        font-family: "Cinzel Decorative", serif;
-        text-shadow: 0 0 6px rgba(164, 217, 249, 0.8);
+        font-size: 1.3rem;
+        color: #a86c66;
+        /* 淡棕粉色 */
+        font-family: "Zhi Mang Xing", "STKaiti", serif;
+        /* 手写感或楷体 */
+        text-shadow: 0 0 4px rgba(255, 223, 228, 0.4);
         margin: 0;
       }
 
       .toggle-icon {
-        font-size: 1.2rem;
-        color: #a4d9f9;
+        font-size: 1rem;
+        color: #a86c66;
         user-select: none;
-        text-shadow: 0 0 6px rgba(164, 217, 249, 0.8);
+        text-shadow: 0 0 4px rgba(255, 223, 228, 0.4);
       }
     }
 
@@ -1127,62 +1161,70 @@ $highlight: #ffd700;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding: 10px 12px;
+        padding: 8px 10px;
         margin-bottom: 6px;
         border-radius: 14px;
+        background: rgba(255, 255, 255, 0.6);
+        border: 1px solid rgba(88, 62, 53, 0.06);
         transition: background 0.3s, box-shadow 0.3s, color 0.3s;
 
         &:hover {
-          background: rgba(209, 107, 165, 0.1);
-          box-shadow: 0 0 8px rgba(209, 107, 165, 0.4);
+          background: rgba(255, 223, 228, 0.3);
+          box-shadow: 0 0 8px rgba(168, 108, 102, 0.2);
         }
 
         .rank {
           width: 28px;
           text-align: center;
           font-weight: bold;
-          font-size: 1rem;
-          color: #f0f8ff;
+          font-size: 0.95rem;
+          color: #a86c66;
         }
 
         .name {
           flex: 1;
           padding: 0 8px;
           font-size: 0.9rem;
-          color: #e9eef8;
-          text-shadow: 0 0 4px rgba(164, 217, 249, 0.4);
+          color: #5b463f;
+          text-shadow: 0 0 2px rgba(255, 255, 255, 0.6);
         }
 
         .count {
           font-size: 0.85rem;
-          color: #fbc0e8;
+          color: #c97f7e;
+          /* 暖粉色 */
           font-weight: bold;
         }
 
+        /* 前三名加淡雅渐变 + 柔和阴影 */
         &.rank-1 {
-          background: linear-gradient(135deg, #a4d9f9, #2f3f6b, #a4d9f9);
-          box-shadow: 0 0 12px rgba(164, 217, 249, 0.8);
+          background: linear-gradient(135deg, #fff7f2, #ffe0e6);
+          box-shadow: 0 0 10px rgba(255, 223, 228, 0.4);
         }
+
         &.rank-2 {
-          background: linear-gradient(135deg, #d16ba5, #a03070);
-          box-shadow: 0 0 10px rgba(209, 107, 165, 0.7);
+          background: linear-gradient(135deg, #fff7f2, #fce8e0);
+          box-shadow: 0 0 8px rgba(168, 108, 102, 0.25);
         }
+
         &.rank-3 {
-          background: linear-gradient(135deg, #b78ac8, #d16ba5);
-          box-shadow: 0 0 8px rgba(209, 107, 165, 0.6);
+          background: linear-gradient(135deg, #fff7f2, #f6e6e0);
+          box-shadow: 0 0 6px rgba(168, 108, 102, 0.2);
         }
       }
     }
 
-    // 淡入淡出动画
+    /* 淡入淡出动画 */
     .fade-enter-active,
     .fade-leave-active {
       transition: opacity 0.3s ease;
     }
+
     .fade-enter-from,
     .fade-leave-to {
       opacity: 0;
     }
   }
+
 }
 </style>
