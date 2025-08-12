@@ -9,9 +9,20 @@
         </button>
       </div>
       <div class="gallery-grid">
-        <div v-for="(img, index) in images" :key="img.id" class="card" @click="openLightbox(index)" ref="cards">
+        <div
+          v-for="(img, index) in images"
+          :key="img.id"
+          class="card"
+          @click="openLightbox(index)"
+          ref="cards"
+        >
           <div class="card-inner">
-            <img :src="img.src" :alt="img.alt" loading="lazy" @load="onImageLoad($event)" />
+            <img
+              :src="img.src"
+              :alt="img.alt"
+              loading="lazy"
+              @load="onImageLoad($event)"
+            />
             <div class="overlay">
               <span>查看大图</span>
             </div>
@@ -35,7 +46,12 @@
       </div>
       <transition name="fade">
         <ul v-if="expanded" class="ranking-list">
-          <li v-for="(item, idx) in rankingList" :key="idx" class="ranking-item" :class="`rank-${idx + 1}`">
+          <li
+            v-for="(item, idx) in rankingList"
+            :key="idx"
+            class="ranking-item"
+            :class="`rank-${idx + 1}`"
+          >
             <span class="rank">{{ idx + 1 }}</span>
             <span class="name">{{ item.nickname }}</span>
             <span class="count">{{ item.count }} 张</span>
@@ -52,14 +68,16 @@
     </div>
 
     <!-- 上传弹窗 -->
-    <div v-if="uploadModalOpen" class="upload-modal-overlay" @click.self="closeUploadModal">
+    <div
+      v-if="uploadModalOpen"
+      class="upload-modal-overlay"
+      @click.self="closeUploadModal"
+    >
       <div class="upload-modal">
         <h3>批量上传图片</h3>
         <div class="tip-container">
           <ul class="tips-list">
-            <li>
-              审核规则：1.不要 AI 图 2.不要色情倾向 3.要我能认出是惠惠。
-            </li>
+            <li>审核规则：1.不要 AI 图 2.不要色情倾向 3.要我能认出是惠惠。</li>
             <li>
               由于没有用户系统，我这边不好做审核反馈，但只要显示上传成功，我这边肯定能收到。
             </li>
@@ -78,7 +96,13 @@
         </label>
         <label>
           选择图片（最多 {{ remaining }} 张）：
-          <input ref="fileInput" type="file" multiple accept="image/*" @change="handleFileSelect" />
+          <input
+            ref="fileInput"
+            type="file"
+            multiple
+            accept="image/*"
+            @change="handleFileSelect"
+          />
         </label>
         <p class="tip" v-if="selectedFiles.length">
           已选 {{ selectedFiles.length }} 张
@@ -93,8 +117,13 @@
     </div>
 
     <div class="floating-chibis">
-      <img v-for="(pet, i) in chibiList" :key="i" :src="pet.src" :style="{ top: pet.top + 'px', left: pet.left + 'px' }"
-        class="chibi-img" />
+      <img
+        v-for="(pet, i) in chibiList"
+        :key="i"
+        :src="pet.src"
+        :style="{ top: pet.top + 'px', left: pet.left + 'px' }"
+        class="chibi-img"
+      />
     </div>
   </div>
 </template>
@@ -605,11 +634,11 @@ $highlight: #ffd700;
         /* 暗棕色，保证文字可读性 */
 
         /* 柔和阴影，带一点内阴影显得像纸片 */
-        box-shadow:
-          0 8px 20px rgba(100, 80, 70, 0.08),
+        box-shadow: 0 8px 20px rgba(100, 80, 70, 0.08),
           inset 0 1px 0 rgba(255, 255, 255, 0.6);
 
-        transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.28s ease, color 0.18s;
+        transition: transform 0.18s ease, box-shadow 0.22s ease,
+          background 0.28s ease, color 0.18s;
 
         /* 左侧小心形 / 装饰 */
         &::before {
@@ -640,7 +669,11 @@ $highlight: #ffd700;
           top: -40%;
           width: 160%;
           height: 120%;
-          background: linear-gradient(120deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.02));
+          background: linear-gradient(
+            120deg,
+            rgba(255, 255, 255, 0.36),
+            rgba(255, 255, 255, 0.02)
+          );
           transform: rotate(18deg);
           opacity: 0;
           transition: opacity 0.45s ease, transform 0.45s ease;
@@ -652,8 +685,7 @@ $highlight: #ffd700;
           transform: translateY(-4px);
           background: linear-gradient(180deg, #fff1ef 0%, #ffdfe6 100%);
           color: #4a352f;
-          box-shadow:
-            0 14px 34px rgba(168, 108, 102, 0.12),
+          box-shadow: 0 14px 34px rgba(168, 108, 102, 0.12),
             inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
@@ -665,21 +697,18 @@ $highlight: #ffd700;
         /* active（按下）手感 */
         &:active {
           transform: translateY(-1px) scale(0.995);
-          box-shadow:
-            0 6px 14px rgba(100, 80, 70, 0.06),
+          box-shadow: 0 6px 14px rgba(100, 80, 70, 0.06),
             inset 0 1px 0 rgba(255, 255, 255, 0.5);
         }
 
         /* 键盘聚焦可见性（可访问） */
         &:focus-visible {
           outline: none;
-          box-shadow:
-            0 0 0 4px rgba(255, 223, 228, 0.28),
+          box-shadow: 0 0 0 4px rgba(255, 223, 228, 0.28),
             0 8px 22px rgba(100, 80, 70, 0.08);
         }
       }
     }
-
 
     .gallery-grid {
       display: grid;
@@ -696,7 +725,6 @@ $highlight: #ffd700;
         }
 
         &.loaded {
-
           // Blur-up & grayscale removed
           .card-inner img {
             filter: none;
@@ -901,15 +929,13 @@ $highlight: #ffd700;
     /* 奶油 + 淡粉 */
     border: 1px solid rgba(88, 62, 53, 0.06);
     border-radius: 28px;
-    box-shadow:
-      0 10px 26px rgba(88, 62, 53, 0.06),
-      /* 柔和外阴影 */
-      inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    box-shadow: 0 10px 26px rgba(88, 62, 53, 0.06),
+      /* 柔和外阴影 */ inset 0 1px 0 rgba(255, 255, 255, 0.6);
     /* 纸张高光 */
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.22s ease, background 0.25s ease, color 0.18s;
+    transition: transform 0.18s ease, box-shadow 0.22s ease,
+      background 0.25s ease, color 0.18s;
     z-index: 10;
-
 
     /* 轻柔高光层，hover 时显现 */
     &::after {
@@ -917,7 +943,11 @@ $highlight: #ffd700;
       position: absolute;
       inset: 0;
       border-radius: inherit;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.36), rgba(255, 255, 255, 0.02));
+      background: linear-gradient(
+        120deg,
+        rgba(255, 255, 255, 0.36),
+        rgba(255, 255, 255, 0.02)
+      );
       opacity: 0;
       transform: translateY(-6px);
       transition: opacity 0.38s ease, transform 0.38s ease;
@@ -929,8 +959,7 @@ $highlight: #ffd700;
       transform: translateY(-4px);
       background: linear-gradient(180deg, #fff1ef 0%, #ffdfe6 100%);
       color: #47332c;
-      box-shadow:
-        0 16px 40px rgba(168, 108, 102, 0.09),
+      box-shadow: 0 16px 40px rgba(168, 108, 102, 0.09),
         inset 0 1px 0 rgba(255, 255, 255, 0.6);
     }
 
@@ -942,13 +971,10 @@ $highlight: #ffd700;
     /* active：按下的轻微回弹手感 */
     &:active {
       transform: translateY(-2px) scale(0.995);
-      box-shadow:
-        0 8px 18px rgba(88, 62, 53, 0.06),
+      box-shadow: 0 8px 18px rgba(88, 62, 53, 0.06),
         inset 0 1px 0 rgba(255, 255, 255, 0.5);
     }
-
   }
-
 
   .upload-modal-overlay {
     position: fixed;
@@ -1103,7 +1129,6 @@ $highlight: #ffd700;
     }
   }
 
-
   .ranking-panel {
     width: 220px;
     padding: 16px;
@@ -1112,8 +1137,7 @@ $highlight: #ffd700;
     backdrop-filter: blur(6px);
     border-radius: 18px;
     border: 1px solid rgba(88, 62, 53, 0.08);
-    box-shadow:
-      0 8px 20px rgba(88, 62, 53, 0.06),
+    box-shadow: 0 8px 20px rgba(88, 62, 53, 0.06),
       inset 0 1px 0 rgba(255, 255, 255, 0.6);
     position: fixed;
     top: 84px;
@@ -1225,6 +1249,5 @@ $highlight: #ffd700;
       opacity: 0;
     }
   }
-
 }
 </style>

@@ -1,9 +1,6 @@
 <template>
   <div class="chat-page">
-
     <div class="chat-container">
-      <!-- 统计面板 -->
-
       <!-- 统计面板（放在聊天容器顶部） -->
       <div class="stats-panel">
         <div class="stat-item">
@@ -18,13 +15,20 @@
           活跃天数：<span>{{ stats.activeDates.length }}</span> 天
         </div>
         <div class="stat-item">
-          今日对话：<span>{{ stats.dailyChats[new Date().toISOString().slice(0, 10)] || 0 }}</span> 次
+          今日对话：<span>{{
+            stats.dailyChats[new Date().toISOString().slice(0, 10)] || 0
+          }}</span>
+          次
         </div>
         <button class="detail-btn" @click="showModal = true">全部</button>
       </div>
       <div class="messages" ref="msgList">
         <transition-group name="msg" tag="div">
-          <div v-for="msg in chatLog" :key="msg.id" :class="['message', msg.role, { error: msg.isError }]">
+          <div
+            v-for="msg in chatLog"
+            :key="msg.id"
+            :class="['message', msg.role, { error: msg.isError }]"
+          >
             <div class="avatar" :class="msg.role"></div>
             <div class="bubble">
               <div class="content" v-html="msg.text"></div>
@@ -44,20 +48,44 @@
         </transition-group>
       </div>
       <form class="input-area" @submit.prevent="sendMessage">
-        <!-- 输入框 -->
-        <input v-model="input" type="text" placeholder="向珂朵莉提问…" :disabled="loading" @keydown="handleKeydown" />
-        <!-- 清空 & 语音 图标按钮组 -->
+        <!-- 输入框改成 textarea -->
+        <textarea
+          v-model="input"
+          placeholder="向惠提问…"
+          :disabled="loading"
+          @keydown="handleKeydown"
+          rows="1"
+        ></textarea>
+
+        <!-- 清空按钮 -->
         <div class="btn-group">
-          <button type="button" class="clear-btn" @click="clearChat" :disabled="loading" title="清空对话">
+          <button
+            type="button"
+            class="clear-btn"
+            @click="clearChat"
+            :disabled="loading"
+            title="清空对话"
+          >
             ✖
           </button>
         </div>
-        <!-- 发送主按钮 -->
-        <button type="submit" class="send-btn" :disabled="!input.trim() || loading">
+
+        <!-- 发送按钮 -->
+        <button
+          type="submit"
+          class="send-btn"
+          :disabled="!input.trim() || loading"
+        >
           发送
         </button>
+
         <!-- 统计数据按钮 -->
-        <button type="button" class="Alldetail-btn" @click="showModal = true" title="查看统计">
+        <button
+          type="button"
+          class="Alldetail-btn"
+          @click="showModal = true"
+          title="查看统计"
+        >
           统计数据
         </button>
       </form>
@@ -75,7 +103,12 @@
             }}
           </li>
           <li>活跃天数：{{ stats.activeDates.length }} 天</li>
-          <li>今日对话：{{ stats.dailyChats[new Date().toISOString().slice(0, 10)] || 0 }} 次</li>
+          <li>
+            今日对话：{{
+              stats.dailyChats[new Date().toISOString().slice(0, 10)] || 0
+            }}
+            次
+          </li>
           <li>总使用时长：{{ formatDuration(stats.totalTime) }}</li>
           <li>当前连续活跃：{{ stats.currentStreak }} 天</li>
           <li>最长连续活跃：{{ stats.longestStreak }} 天</li>
@@ -101,16 +134,13 @@ import {
   nextTick,
   watch,
   onBeforeUnmount,
-  onUnmounted,
 } from "vue";
 import { sendMessageToKdl } from "@/api/deepseekApi";
 
-
-const STORAGE_KEY = "kdl_chat_log";
-
+const STORAGE_KEY = "hui_chat_log";
 
 // 本地存储键名
-const STORAGE_STATS_KEY = "kdl_chat_stats";
+const STORAGE_STATS_KEY = "hui_chat_stats";
 const showModal = ref(false);
 // Stats 类型声明，确保所有字段都有默认值
 interface Stats {
@@ -122,7 +152,6 @@ interface Stats {
   longestStreak: number; // 历史最长连续活跃天数
 
   totalTime: number; // 累计使用时长（毫秒）
-
 }
 
 // 默认值，用于补齐本地存储中可能缺失的字段
@@ -156,13 +185,12 @@ function saveStats() {
   localStorage.setItem(STORAGE_STATS_KEY, JSON.stringify(stats));
 }
 
-
 // 更新「活跃天数」及「连续活跃」逻辑
 function updateActive(date: string) {
   if (!stats.activeDates.includes(date)) {
     stats.activeDates.push(date);
     updateStreak();
-    saveStats();  // 持久化活跃天数变化
+    saveStats(); // 持久化活跃天数变化
   }
 }
 function updateStreak() {
@@ -180,16 +208,14 @@ function updateStreak() {
   });
   stats.currentStreak = dates[dates.length - 1] === todayStr ? curr : 0;
   stats.longestStreak = max;
-  saveStats()
+  saveStats();
 }
 
 // 更新「每日对话次数」
 function updateDaily(date: string) {
   stats.dailyChats[date] = (stats.dailyChats[date] || 0) + 1;
-  saveStats();  // 持久化活跃天数变化
+  saveStats(); // 持久化活跃天数变化
 }
-
-
 
 // 计算最活跃日
 const mostActiveDayComputed = computed(() => {
@@ -201,9 +227,8 @@ const mostActiveDayComputed = computed(() => {
       day = d;
     }
   }
-  return day || new Date().toISOString().slice(0, 10)
+  return day || new Date().toISOString().slice(0, 10);
 });
-
 
 // 格式化总使用时长
 function formatDuration(ms: number): string {
@@ -218,7 +243,6 @@ const stats = reactive<Stats>(loadStats());
 // 会话开始时间，用于计算本次时长
 const sessionStart = Date.now();
 
-
 interface ChatMsg {
   id: number;
   role: "user" | "bot";
@@ -232,17 +256,13 @@ const input = ref("");
 const loading = ref(false);
 const msgList = ref<HTMLElement>();
 
-
-
-
-
 async function sendMessage() {
   if (!input.value.trim()) return;
   if (stats.totalChats === 0 && !localStorage.getItem(STORAGE_STATS_KEY)) {
     stats.firstTimestamp = Date.now();
     saveStats();
   }
-  const date = new Date().toISOString().slice(0, 10);  // 每次都取最新“今天”
+  const date = new Date().toISOString().slice(0, 10); // 每次都取最新“今天”
   stats.totalChats++;
   updateActive(date);
   updateDaily(date);
@@ -266,13 +286,10 @@ async function sendMessage() {
       role: "bot",
       text: botReply,
     });
-
   } catch (e) {
     console.error(e);
 
-    const errorMessages = [
-      "API余额耗尽了，去b站提醒我充钱吧",
-    ];
+    const errorMessages = ["API余额耗尽了，去b站提醒我充钱吧"];
 
     const randomIndex = Math.floor(Math.random() * errorMessages.length);
 
@@ -298,12 +315,10 @@ function clearChat() {
       {
         id: Date.now(),
         role: "bot",
-        text: "你好，我是珂朵莉，有什么想知道的吗？",
+        text: "你好，我是惠，有什么想知道的吗？",
       },
     ];
     localStorage.removeItem(STORAGE_KEY);
-
-
   }
 }
 
@@ -320,7 +335,7 @@ function loadChatLog(): ChatMsg[] {
     {
       id: Date.now(),
       role: "bot",
-      text: "你好，我是珂朵莉，有什么想知道的吗？",
+      text: "你好，我是惠，有什么想知道的吗？",
     },
   ];
 }
@@ -342,17 +357,17 @@ watch(
 );
 
 function handleBeforeUnload() {
-  stats.totalTime += Date.now() - sessionStart
-  saveStats()
+  stats.totalTime += Date.now() - sessionStart;
+  saveStats();
 }
 
 onMounted(() => {
   scrollToBottom();
-  window.addEventListener("beforeunload", handleBeforeUnload)
+  window.addEventListener("beforeunload", handleBeforeUnload);
 });
 
 onBeforeUnmount(() => {
-  window.removeEventListener("beforeunload", handleBeforeUnload)
+  window.removeEventListener("beforeunload", handleBeforeUnload);
 });
 </script>
 
@@ -360,11 +375,14 @@ onBeforeUnmount(() => {
 .chat-page {
   padding-top: 64px;
   min-height: 100vh;
-  background: linear-gradient(to bottom right,
-      #1e2e4d,
-      #758cb3,
-      #d06487);
-  color: #e9eef8;
+  background-color: #fff6f9;
+  background-image: linear-gradient(
+    145deg,
+    #fff6f9 0%,
+    #fff1f4 40%,
+    #eef6fb 100%
+  );
+  color: #5b463f;
   display: flex;
   flex-direction: column;
 
@@ -380,31 +398,56 @@ onBeforeUnmount(() => {
     .stats-panel {
       display: flex;
       align-items: center;
-      background: rgba(164, 217, 249, 0.12);
-      backdrop-filter: blur(6px);
+      background: rgba(255, 250, 245, 0.95); /* 奶油纸质底 */
+      backdrop-filter: blur(4px);
       padding: 8px 16px;
       border-radius: 12px;
       font-size: 14px;
-      color: #e9eef8;
+      color: #5b463f; /* 暖棕文字 */
       justify-content: space-around;
+      box-shadow: 0 6px 18px rgba(90, 70, 60, 0.06);
+      border: 1px solid rgba(199, 143, 123, 0.12);
 
-      .stat-item span {
-        color: #a4d9f9;
-        font-weight: bold;
+      .stat-item {
+        .label {
+          font-size: 12px;
+          color: #7a6254;
+          margin-bottom: 4px;
+          opacity: 0.9;
+        }
+
+        span {
+          color: #c97f7e; /* 暖粉色数字，低饱和 */
+          font-weight: 700;
+          font-size: 15px;
+          text-shadow: 0 0 4px rgba(230, 200, 180, 0.3);
+        }
       }
 
       .detail-btn {
-
         background: transparent;
-        border: 1px solid #a4d9f9;
-        border-radius: 4px;
-        color: #a4d9f9;
-        padding: 4px 12px;
+        border: 1px solid rgba(199, 143, 123, 0.28); /* 暖棕描边 */
+        border-radius: 6px;
+        color: #7a6254;
+        padding: 6px 12px;
         cursor: pointer;
-        transition: background 0.2s;
+        font-size: 13px;
+        transition: background 0.16s ease, box-shadow 0.16s ease,
+          transform 0.12s;
 
         &:hover {
-          background: rgba(164, 217, 249, 0.2);
+          background: rgba(230, 200, 180, 0.18);
+          box-shadow: 0 8px 18px rgba(90, 70, 60, 0.06);
+          transform: translateY(-2px);
+        }
+
+        &:active {
+          transform: translateY(0);
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 6px rgba(199, 143, 123, 0.1);
         }
       }
     }
@@ -418,18 +461,21 @@ onBeforeUnmount(() => {
     scroll-behavior: smooth;
   }
 
+  /* 加藤惠风格的消息气泡 */
   .message {
     display: flex;
     align-items: flex-start;
     margin-bottom: 12px;
+    color: #5b463f; /* 暖棕正文色 */
 
     &.user {
       flex-direction: row-reverse;
     }
 
     &.error .bubble {
-      background: rgba(209, 107, 165, 0.3);
-      border: 1px solid #d16ba5;
+      background: rgba(229, 155, 156, 0.18); /* 柔粉错误提示 */
+      border: 1px solid rgba(209, 107, 165, 0.28);
+      box-shadow: 0 6px 18px rgba(209, 107, 165, 0.08);
     }
 
     .avatar {
@@ -438,101 +484,146 @@ onBeforeUnmount(() => {
       border-radius: 50%;
       margin: 0 8px;
       background-size: cover;
+      background-position: center;
       flex-shrink: 0;
-      box-shadow: 0 0 10px rgba(164, 217, 249, 0.5);
+      box-shadow: 0 6px 16px rgba(90, 70, 60, 0.06); /* 暖棕柔光 */
       z-index: 10;
 
       &.bot {
         background-image: url("@/assets/megumi_kato.png");
-        box-shadow: 0 0 14px #a4d9f9;
-
+        box-shadow: 0 8px 22px rgba(199, 143, 123, 0.12);
+        border: 2px solid rgba(255, 255, 255, 0.35); /* 头像外侧轻描 */
       }
 
       &.user {
-        background: rgba(255, 255, 255, 0.8);
+        background: linear-gradient(180deg, #fff7f2, #fff1ee);
+        box-shadow: 0 6px 16px rgba(255, 228, 235, 0.6);
+        border: 1px solid rgba(199, 143, 123, 0.08);
       }
     }
 
     .bubble {
-      max-width: 70%;
-      background: rgba(164, 217, 249, 0.08);
-      border: 1px solid rgba(164, 217, 249, 0.3);
-      backdrop-filter: blur(10px);
+      max-width: 78%;
+      background: rgba(255, 250, 245, 0.9); /* 纸质暖底 */
+      border: 1px solid rgba(199, 143, 123, 0.12);
+      backdrop-filter: blur(6px);
       padding: 12px 16px;
       border-radius: 16px;
       line-height: 1.6;
       word-break: break-word;
-      box-shadow: 0 0 6px rgba(164, 217, 249, 0.4);
+      box-shadow: 0 6px 16px rgba(90, 70, 60, 0.04);
+      transition: box-shadow 0.18s, transform 0.12s, background 0.12s;
+      color: #5b463f; /* 与整体文字色统一 */
 
       &:hover {
-        box-shadow: 0 0 12px rgba(164, 217, 249, 0.5);
+        box-shadow: 0 10px 26px rgba(90, 70, 60, 0.06);
+        transform: translateY(-2px);
       }
 
       &.loading {
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(91, 70, 63, 0.7);
+        opacity: 0.95;
       }
 
+      /* bot 消息 — 微妙的左侧“尾巴”视觉（通过圆角处理）*/
       .message.bot & {
-        border-radius: 16px 16px 16px 4px;
+        border-radius: 16px 16px 16px 6px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 247, 242, 0.95),
+          rgba(255, 236, 238, 0.88)
+        );
       }
 
+      /* user 消息 — 右侧“尾巴” */
       .message.user & {
-        border-radius: 16px 16px 4px 16px;
+        border-radius: 16px 16px 6px 16px;
+        background: linear-gradient(
+          135deg,
+          rgba(255, 247, 242, 0.95),
+          rgba(252, 241, 238, 0.92)
+        );
+      }
+
+      /* 小字体 / 链接等样式提示（可选）*/
+      .meta {
+        display: block;
+        margin-top: 6px;
+        font-size: 12px;
+        color: rgba(91, 70, 63, 0.6);
       }
     }
   }
 
+  /* 加藤惠风格的输入区（替换原来的 .input-area） */
   .input-area {
     position: sticky;
-    bottom: 0;
+    bottom: 12px;
     display: flex;
     align-items: center;
-    background: rgba(15, 20, 60, 0.8);
+    background: rgba(255, 250, 245, 0.96); /* 米白暖底 */
     backdrop-filter: blur(6px);
-    padding: 8px 12px;
+    padding: 10px;
     gap: 8px;
     z-index: 10;
-    border-radius: 12px;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(90, 70, 60, 0.08);
+    border: 1px solid rgba(200, 180, 160, 0.3);
 
-    input {
+    /* 文本输入区使用 textarea（自动扩展） */
+    textarea {
       flex: 1;
-      padding: 12px 20px;
-      background: transparent;
-      border: none;
-      color: #e9eef8;
-      font-size: 16px;
+      padding: 0 14px;
+      background: rgba(255, 255, 255, 0.9); /* 纸质感 */
+      border: 1px solid rgba(200, 180, 160, 0.35);
+      color: #5b463f; /* 暗棕，保证可读 */
+      font-size: 15px;
+      line-height: 1.45;
       outline: none;
+      resize: none; /* 禁止拖拽改变大小 */
+      overflow: hidden; /* 自动扩展时不出现滚动条 */
+      min-height: 44px;
+      max-height: 160px; /* 最多扩展到 ~6 行 */
+      border-radius: 10px;
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+      transition: box-shadow 0.12s, border-color 0.12s;
 
       &::placeholder {
-        color: rgba(233, 238, 248, 0.6);
+        color: rgba(90, 63, 82, 0.35);
+      }
+
+      &:focus {
+        border-color: #e6a5a0;
+        box-shadow: 0 0 0 4px rgba(230, 165, 160, 0.12);
       }
     }
 
     .btn-group {
       display: flex;
-      gap: 6px;
+      gap: 8px;
 
       button {
-        display: flex;
+        display: inline-flex;
         align-items: center;
         justify-content: center;
-        padding: 8px;
+        width: 40px;
+        height: 40px;
+        padding: 0;
         border: none;
-        border-radius: 50%;
-        background: rgba(164, 217, 249, 0.1);
+        border-radius: 10px;
+        background: rgba(230, 200, 180, 0.12);
+        color: #7a6254;
         cursor: pointer;
-        transition: background 0.2s;
-
+        transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+        box-shadow: 0 2px 6px rgba(90, 70, 60, 0.04);
+        margin: 0 auto;
         &:hover {
-          background: rgba(164, 217, 249, 0.3);
+          transform: translateY(-2px);
+          background: rgba(230, 200, 180, 0.22);
         }
 
-        &.voice-btn {
-          font-size: 18px;
-        }
-
-        &.clear-btn {
-          font-size: 16px;
+        &:active {
+          transform: translateY(0);
         }
 
         &:disabled {
@@ -540,124 +631,195 @@ onBeforeUnmount(() => {
           cursor: not-allowed;
         }
       }
+
+      .clear-btn {
+        font-size: 16px;
+        line-height: 1;
+      }
     }
 
+    /* 发送主按钮——温柔但明显 */
     .send-btn {
-      padding: 0 24px;
+      padding: 0 22px;
       height: 40px;
-      background: linear-gradient(135deg, #a4d9f9, #2f3f6b);
       border: none;
       border-radius: 20px;
-      color: #fff;
-      font-weight: bold;
+      background: linear-gradient(135deg, #f3d6c6, #c78f7b); /* 米粉渐变 */
+      color: #fff8f5;
+      font-weight: 600;
+      font-size: 15px;
       cursor: pointer;
-      transition: background 0.3s;
+      box-shadow: 0 8px 20px rgba(199, 143, 123, 0.16);
+      transition: transform 0.12s, box-shadow 0.18s, filter 0.12s;
+
+      &:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(199, 143, 123, 0.2);
+        filter: saturate(1.03);
+      }
 
       &:disabled {
         opacity: 0.5;
         cursor: not-allowed;
+        transform: none;
+        box-shadow: none;
+        filter: none;
       }
 
-      &:hover {
-        background: linear-gradient(135deg, #bedcff, #416a9c);
-        box-shadow: 0 0 12px rgba(190, 220, 255, 0.6);
-      }
-
-      @keyframes pulse {
-
-        0%,
-        100% {
-          box-shadow: 0 0 8px rgba(190, 220, 255, 0.4);
-        }
-
-        50% {
-          box-shadow: 0 0 14px rgba(190, 220, 255, 0.8);
-        }
-      }
-
-      &:not(:disabled) {
-        animation: pulse 4s ease-in-out infinite;
+      &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(199, 143, 123, 0.12);
       }
     }
 
+    /* 统计数据按钮（次要） */
     .Alldetail-btn {
+      display: none;
       margin-left: 4px;
       background: transparent;
-      border: 1px solid #a4d9f9;
-      border-radius: 4px;
-      padding: 4px 12px;
-      color: #a4d9f9;
-      font-size: 14px;
+      border: 1px solid rgba(199, 143, 123, 0.35);
+      border-radius: 6px;
+      padding: 6px 10px;
+      color: #7a6254;
+      font-size: 13px;
       cursor: pointer;
-      display: none;
+      transition: background 0.12s, box-shadow 0.12s;
 
       &:hover {
-        background: rgba(164, 217, 249, 0.2);
+        background: rgba(230, 200, 180, 0.18);
+        box-shadow: 0 6px 14px rgba(90, 70, 60, 0.04);
       }
     }
   }
 
+  /* 加藤惠风格的模态框 */
   .modal-overlay {
     position: fixed;
     inset: 0;
-    background: rgba(15, 5, 40, 0.85);
+    /* 稍暖的暗色遮罩，让弹窗像翻出的一页纸 */
+    background: rgba(45, 36, 32, 0.72);
     display: flex;
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 16px;
 
     .modal-content {
-      background: rgba(20, 20, 60, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(164, 217, 249, 0.4);
-      border-radius: 16px;
-      padding: 24px;
       width: 320px;
-      color: #e9eef8;
-      box-shadow: 0 0 20px rgba(164, 217, 249, 0.3);
-      animation: fadeIn 0.3s ease;
+      max-width: 100%;
+      background: rgba(255, 250, 245, 0.98); /* 奶油纸质底 */
+      backdrop-filter: blur(6px);
+      border-radius: 14px;
+      padding: 20px;
+      color: #5b463f; /* 暖棕文字 */
+      box-shadow: 0 10px 30px rgba(90, 70, 60, 0.12),
+        /* 柔和投影 */ inset 0 1px 0 rgba(255, 255, 255, 0.7); /* 纸张高光 */
+      border: 1px solid rgba(199, 143, 123, 0.22); /* 细腻边框 */
+      animation: fadeInUp 220ms ease;
+
+      /* 小装饰（左上角的手写贴纸感） */
+      &::before {
+        content: "♡";
+        position: absolute;
+        left: 14px;
+        top: 10px;
+        font-size: 14px;
+        color: rgba(199, 143, 123, 0.9);
+        background: rgba(255, 255, 255, 0);
+        transform: translateY(-2px);
+        pointer-events: none;
+      }
 
       h3 {
-        margin-bottom: 16px;
-        font-size: 20px;
-        font-weight: bold;
+        margin: 0 0 12px 0;
+        font-size: 18px;
+        font-weight: 600;
         text-align: center;
-        color: #a4d9f9;
-        border-bottom: 1px solid rgba(164, 217, 249, 0.3);
+        color: #c78f7b; /* 奶茶粉标题色 */
         padding-bottom: 8px;
+        /* 微手写/纸感下划线（可删） */
+        border-bottom: 1px dashed rgba(199, 143, 123, 0.14);
       }
 
       .detail-list {
         list-style: none;
         padding: 0;
-        margin: 0 0 20px;
+        margin: 12px 0 18px;
         line-height: 1.6;
         font-size: 14px;
+        color: #5b463f;
 
         li {
           margin-bottom: 8px;
-          color: #e9eef8;
+          padding-left: 6px;
 
           &:nth-child(odd) {
-            color: #b0ccea;
+            color: #6f5648; /* 稍深一点的棕，便于区分行 */
+          }
+
+          &:last-child {
+            margin-bottom: 0;
           }
         }
       }
 
       .close-btn {
+        display: block;
         margin: 0 auto;
         padding: 8px 20px;
-        background: transparent;
-        border: 1px solid #a4d9f9;
-        border-radius: 6px;
-        color: #a4d9f9;
+        background: linear-gradient(135deg, #f3d6c6, #c78f7b); /* 米粉渐变 */
+        color: #fff8f5;
+        border: none;
+        border-radius: 10px;
         cursor: pointer;
-        transition: all 0.3s;
+        font-weight: 600;
+        box-shadow: 0 8px 20px rgba(199, 143, 123, 0.14);
+        transition: transform 0.12s ease, box-shadow 0.14s ease, filter 0.12s;
 
         &:hover {
-          background: rgba(164, 217, 249, 0.2);
-          transform: scale(1.05);
-          box-shadow: 0 0 8px rgba(164, 217, 249, 0.4);
+          transform: translateY(-3px);
+          box-shadow: 0 12px 28px rgba(199, 143, 123, 0.18);
+          filter: saturate(1.03);
+        }
+
+        &:active {
+          transform: translateY(-1px) scale(0.996);
+        }
+
+        &:focus-visible {
+          outline: none;
+          box-shadow: 0 0 0 6px rgba(199, 143, 123, 0.1);
+        }
+      }
+    }
+
+    /* 动画 */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.995);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    /* 移动端微调：更窄但留白充足 */
+    @media (max-width: 480px) {
+      .modal-content {
+        width: 100%;
+        padding: 16px;
+        border-radius: 12px;
+
+        h3 {
+          font-size: 16px;
+        }
+
+        .close-btn {
+          width: 100%;
+          padding: 10px 14px;
+          border-radius: 8px;
         }
       }
     }
@@ -686,7 +848,11 @@ onBeforeUnmount(() => {
 
     .input-area {
       flex-direction: column;
-      gap: 6px;
+      align-items: stretch;
+
+      textarea {
+        width: 100%;
+      }
 
       button {
         width: 100%;
