@@ -135,7 +135,7 @@ import {
   watch,
   onBeforeUnmount,
 } from "vue";
-import { sendMessageToKdl } from "@/api/deepseekApi";
+import { sendMessageToHui } from "@/api/deepseekApi";
 
 const STORAGE_KEY = "hui_chat_log";
 
@@ -280,7 +280,7 @@ async function sendMessage() {
   try {
     //  throw new Error("测试错误");
     const history = chatLog.value.filter((msg) => !msg.isEgg && !msg.isError);
-    const botReply = await sendMessageToKdl(userText, history);
+    const botReply = await sendMessageToHui(userText, history);
     chatLog.value.push({
       id: Date.now() + 1,
       role: "bot",
@@ -306,7 +306,7 @@ async function sendMessage() {
 }
 
 function handleKeydown(e: KeyboardEvent) {
-  if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) sendMessage();
+  if (e.key === "Enter") sendMessage();
 }
 
 function clearChat() {
@@ -544,13 +544,39 @@ onBeforeUnmount(() => {
           rgba(252, 241, 238, 0.92)
         );
       }
+      .dots {
+        display: inline-flex;
+        align-items: center;
+        margin-left: 4px;
 
-      /* 小字体 / 链接等样式提示（可选）*/
-      .meta {
-        display: block;
-        margin-top: 6px;
-        font-size: 12px;
-        color: rgba(91, 70, 63, 0.6);
+        .dot {
+          opacity: 0;
+          font-size: 16px;
+          animation: blink 1s infinite;
+
+          &:nth-child(1) {
+            animation-delay: 0s;
+          }
+
+          &:nth-child(2) {
+            animation-delay: 0.2s;
+          }
+
+          &:nth-child(3) {
+            animation-delay: 0.4s;
+          }
+        }
+
+        @keyframes blink {
+          0%,
+          100% {
+            opacity: 0;
+          }
+
+          50% {
+            opacity: 1;
+          }
+        }
       }
     }
   }
