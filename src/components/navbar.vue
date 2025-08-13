@@ -40,6 +40,7 @@ const links = [
   { name: "寄语心声", path: "/message" },
   { name: "静谧画廊", path: "/gallery" },
   { name: "惠の私语对话", path: "/talk" },
+   { name: "惠の占卜", path: "/luck" },
 ];
 
 

@@ -47,7 +47,7 @@
     <!-- 底部发送区 -->
     <section class="message-form" aria-label="写下你的留言">
       <label class="sr-only" for="mb-name">你的昵称</label>
-      <input id="mb-name" v-model="name" type="text" placeholder="你的昵称（可留空）" @keydown.enter.prevent />
+      <input id="mb-name" v-model="name" type="text" placeholder="你的昵称" @keydown.enter.prevent />
 
       <label class="sr-only" for="mb-content">留言内容</label>
       <textarea id="mb-content" v-model="content" placeholder="写下你的留言...（按 Ctrl+Enter 发送）"

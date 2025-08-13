@@ -26,6 +26,10 @@ const router = createRouter({
       path: "/talk",
       component: () => import("@/views/talkView/index.vue"),
     },
+    {
+      path: "/luck",
+      component: () => import("@/views/luckView/index.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };
