@@ -63,7 +63,7 @@ onMounted(() => {
     background: #fafafa;
     color: #333;
     font-family: 'Noto Serif JP', serif;
-    background-image: url("@/assets/homeBg.png");
+    background-image: url("@/assets/homeBg.webp");
     background-repeat: no-repeat;
     background-size: cover;
 }

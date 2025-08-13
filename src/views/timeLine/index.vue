@@ -242,7 +242,7 @@ onMounted(() => {
   -moz-osx-font-smoothing: grayscale;
   padding: clamp(18px, 4vw, 80px);
   box-sizing: border-box;
-  background-image: url("@/assets/timeLineBg.png");
+  background-image: url("@/assets/timeLineBg.webp");
   background-repeat: no-repeat;
   background-position: right top;
   background-size: cover;

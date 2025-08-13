@@ -315,7 +315,7 @@ function clearChat() {
       {
         id: Date.now(),
         role: "bot",
-        text: "你好，我是惠，有什么想知道的吗？",
+        text: "嗯……要从哪里聊起呢？",
       },
     ];
     localStorage.removeItem(STORAGE_KEY);
@@ -335,7 +335,7 @@ function loadChatLog(): ChatMsg[] {
     {
       id: Date.now(),
       role: "bot",
-      text: "你好，我是惠，有什么想知道的吗？",
+      text: "嗯……要从哪里聊起呢，伦也？",
     },
   ];
 }
