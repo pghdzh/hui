@@ -27,6 +27,10 @@ const router = createRouter({
       component: () => import("@/views/talkView/index.vue"),
     },
     {
+      path: "/story",
+      component: () => import("@/views/storyView/index.vue"),
+    },
+    {
       path: "/luck",
       component: () => import("@/views/luckView/index.vue"),
     },
