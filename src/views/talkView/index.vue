@@ -335,7 +335,7 @@ function loadChatLog(): ChatMsg[] {
     {
       id: Date.now(),
       role: "bot",
-      text: "嗯……要从哪里聊起呢，伦也？",
+      text: "嗯……要从哪里聊起呢？",
     },
   ];
 }
