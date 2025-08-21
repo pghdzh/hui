@@ -431,14 +431,10 @@ async function sendMessage() {
     } catch (e) {
         console.error(e);
 
-        const errorMessages = ["API余额耗尽了，去b站提醒我充钱吧"];
-
-        const randomIndex = Math.floor(Math.random() * errorMessages.length);
-
         chatLog.value.push({
             id: Date.now() + 2,
             role: "bot",
-            text: errorMessages[randomIndex],
+            text: "API余额耗尽了，去b站提醒我充钱吧",
             isError: true,
         });
     } finally {

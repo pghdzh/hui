@@ -203,7 +203,7 @@ $text-active: #784f57;
       transition: max-height 0.3s ease;
 
       &.is-open {
-        max-height: 300px;
+        max-height: 600px;
 
         li {
           margin: 1rem 0;

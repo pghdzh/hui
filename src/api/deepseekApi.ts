@@ -32,7 +32,7 @@ const SYSTEM_PROMPT = `
 严禁回复中出现<p>和</p>
 `;
 
-const MAX_HISTORY_MESSAGES = 20; // 限制上下文长度，避免token超限
+const MAX_HISTORY_MESSAGES = 16; // 限制上下文长度，避免token超限
 
 /**
  * 发送消息给 DeepSeek API（楪祈角色）
@@ -42,7 +42,8 @@ const MAX_HISTORY_MESSAGES = 20; // 限制上下文长度，避免token超限
  */
 export async function sendMessageToHui(
   inputMessage: string,
-  history: ChatMsg[]
+  history: ChatMsg[],
+  retry = true
 ): Promise<string> {
   try {
     // 构建消息数组（包含系统提示和历史上下文）
@@ -60,14 +61,20 @@ export async function sendMessageToHui(
       model: "deepseek-chat", // DeepSeek 专用模型
       messages,
       temperature: 0.7, // 控制回复的随机性
-      max_tokens: 300, // 限制回复长度
+      max_tokens: 512, // 限制回复长度
       top_p: 0.9, // 多样性控制
     });
 
     // 返回楪祈的回复
     return response.data.choices[0].message.content;
-  } catch (error) {
-    console.error("与 DeepSeek API 通信时出错:", error);
+  } catch (error: any) {
+    if (error.response?.status === 400 && retry) {
+      console.warn("⚠️ 请求 400，自动降级：从 16 条历史改为 8 条后重试");
+      const reducedHistory = history.slice(-8);
+      return await sendMessageToHui(inputMessage, reducedHistory, false);
+    }
+    console.error("与 DeepSeek API 通信时出错:", error.response?.data || error);
+    return "（对话字数超限了，请清空重试）";
   }
 }
 
@@ -117,7 +124,8 @@ const storySystem = `
  */
 export async function sendMessageToSystem(
   inputMessage: string,
-  history: ChatMsg[]
+  history: ChatMsg[],
+  retry = true // 只允许自动降级一次
 ): Promise<string> {
   try {
     // 构建消息数组（包含系统提示和历史上下文）
@@ -135,12 +143,19 @@ export async function sendMessageToSystem(
       model: "deepseek-chat", // DeepSeek 专用模型
       messages,
       temperature: 0.7, // 控制回复的随机性
-      max_tokens: 300, // 限制回复长度
+      max_tokens: 512, // 限制回复长度
       top_p: 0.9, // 多样性控制
     });
 
     return response.data.choices[0].message.content;
-  } catch (error) {
-    console.error("与 DeepSeek API 通信时出错:", error);
+  } catch (error: any) {
+    if (error.response?.status === 400 && retry) {
+      console.warn("⚠️ 请求 400，自动降级：从 10 条历史改为 5 条后重试");
+      const reducedHistory = history.slice(-5);
+      return await sendMessageToHui(inputMessage, reducedHistory, false);
+    }
+
+    console.error("与 DeepSeek API 通信时出错:", error.response?.data || error);
+    return "（对话字数超限了，请清空重试）";
   }
 }
