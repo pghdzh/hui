@@ -74,7 +74,7 @@ export async function sendMessageToHui(
       return await sendMessageToHui(inputMessage, reducedHistory, false);
     }
     console.error("与 DeepSeek API 通信时出错:", error.response?.data || error);
-    return "（对话字数超限了，请清空重试）";
+    return "（出错了，请稍后再试）";
   }
 }
 
@@ -156,6 +156,6 @@ export async function sendMessageToSystem(
     }
 
     console.error("与 DeepSeek API 通信时出错:", error.response?.data || error);
-    return "（对话字数超限了，请清空重试）";
+    return "（出错了，请稍后再试）";
   }
 }
