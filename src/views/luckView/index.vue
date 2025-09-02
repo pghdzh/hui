@@ -79,11 +79,19 @@
                             </div>
 
                             <div class="extras">
-                                <div class="tip"><strong>小语：</strong><span v-html="typed.tip || ''"></span></div>
+                                <div class="tip">
+                                    <strong>小语：</strong>
+                                    <div class="tip-content" role="region" aria-live="polite">
+                                        <span class="tip-text" v-html="typed.tip || ''"></span>
+                                        <button class="play-tip" v-if="(savedResult?.tipFile || result?.tipFile)"
+                                            @click="playTip" :aria-label="'播放小语'" title="播放小语" type="button">🔊</button>
+                                    </div>
+                                </div>
+
                                 <div class="lucky"><strong>吉祥物：</strong><span>{{ savedResult?.lucky?.item ||
                                     result?.lucky?.item
                                     || '—' }}</span> </div>
-                                <div class="lucky"><strong>幸运数字：</strong>  <span>{{ savedResult?.lucky?.number ||
+                                <div class="lucky"><strong>幸运数字：</strong> <span>{{ savedResult?.lucky?.number ||
                                     result?.lucky?.number
                                     || '—'
                                         }}</span></div>
@@ -101,15 +109,19 @@
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue'
 
+type TipItem = {
+    file: string
+    text: string
+}
+
 type PoolBucket = {
     summaries: string[]
     love: string[]
     work: string[]
     money: string[]
     health: string[]
-    tips: string[]
+    tips: TipItem[]    // <- 改为对象数组
 }
-
 const types = [
     { key: 'daiji', label: '大吉', weight: 6, cls: 'daiji' },
     { key: 'zhongji', label: '中吉', weight: 14, cls: 'zhongji' },
@@ -119,6 +131,17 @@ const types = [
     { key: 'daxiong', label: '大凶', weight: 10, cls: 'daxiong' }
 ]
 
+function playVoice(name: string) {
+    const audio = new Audio(`/voice/${name}`);
+    audio.play().catch((e) => console.warn("音频播放失败：", e));
+}
+function playTip() {
+    // 优先使用已保存的结果（刷新后依然可用），否则使用当前 result
+    const file = (savedResult?.value?.tipFile) || (result?.value?.tipFile) || (result?.tipFile) || undefined;
+    if (!file) return;
+    playVoice(file);
+}
+
 const pool: Record<string, PoolBucket> = {
     daiji: {
         summaries: ['运势极佳，一切顺利。', '吉星高照，事情容易如愿。'],
@@ -126,7 +149,12 @@ const pool: Record<string, PoolBucket> = {
         work: ['适合开始重要计划。', '创意与合作都很有利。'],
         money: ['小有收获，但别放松理财。', '适合整理理财计划或小额尝试。'],
         health: ['精神好，适合外出走走。', '注意均衡饮食。'],
-        tips: ['今天的你，很值得信任。', '把握机会，但别太骄傲。']
+        tips: [
+            { file: "daji (1).mp3", text: "我相信你正在努力的事，所以试着鼓起一点勇气吧。" },
+            { file: "daji (2).mp3", text: "今天真的会是很棒的一天哦，你一定会有心情变轻、露出笑容的时刻。" },
+            { file: "daji (3).mp3", text: "今天的空气一定会站在你这边，试着深深吸一口吧。" },
+            { file: "daji (4).mp3", text: "如果你敞开心走走，也许会遇到让你开心的相遇或小小的奇迹。" },
+        ]
     },
     zhongji: {
         summaries: ['状态良好，可以适当积极。', '机会不少，但要稳妥。'],
@@ -134,7 +162,11 @@ const pool: Record<string, PoolBucket> = {
         work: ['按计划推进。', '注意细节会有收获。'],
         money: ['避免冲动消费。', '小额投资谨慎即可。'],
         health: ['能量充足但别过度透支。', '适合轻运动。'],
-        tips: ['慢慢来，步步为营。', '别把自己逼得太紧。']
+        tips: [
+            { file: "zhongji (1).mp3", text: "今天有平稳的运势，留心不要错过小机会，说不定会在意想不到的地方开花。" },
+            { file: "zhongji (2).mp3", text: "和别人聊一聊，也许会让你的心忽然轻松一点，试着主动开口吧。" },
+            { file: "zhongji (3).mp3", text: "如果有困惑，稍微停下来深呼吸，这样你会看到真正重要的东西。" },
+        ]
     },
     xiaoji: {
         summaries: ['有小幸运，但需耐心。', '小事带来小愉快。'],
@@ -142,7 +174,11 @@ const pool: Record<string, PoolBucket> = {
         work: ['小进步显现。', '适合整理与补强。'],
         money: ['小笔意外之财或优惠。', '节省一点更稳妥。'],
         health: ['注意眼睛疲劳。', '适当补水与休息。'],
-        tips: ['期待小确幸，但别太依赖运气。', '做些小事，会有成就感.']
+        tips: [
+            { file: "xiaoji (1).mp3", text: "今天有小小的幸福等着你，发现了的话也告诉我哦。" },
+            { file: "xiaoji (2).mp3", text: "也许今天某人不经意的一句话会触动你的心。" },
+            { file: "xiaoji (3).mp3", text: "虽然没有大变化，但正因为如此，你可以慢慢喘口气，一步步走好。" },
+        ]
     },
     ji: {
         summaries: ['平稳的一天，适合常规安排。', '平凡但安稳。'],
@@ -150,7 +186,11 @@ const pool: Record<string, PoolBucket> = {
         work: ['按部就班即可。', '清理任务清单会有收获。'],
         money: ['收支正常，守住当下。', '注意小额支出。'],
         health: ['精神稳定，注意放松。', '可安排短时休息。'],
-        tips: ['平凡也值得珍惜。', '给自己一点温柔的时间。']
+        tips: [
+            { file: "ji (1).mp3", text: "今天很平静，你可以放心照常度过，重要的是发现小小的满足感。" },
+            { file: "ji (2).mp3", text: "今天适合稍微夸奖自己，你的努力我一直知道。" },
+            { file: "ji (3).mp3", text: "先处理完麻烦事，再给自己时间做喜欢的事，你的心会轻松很多。" },
+        ]
     },
     xiong: {
         summaries: ['需多加小心，别掉以轻心。', '易出现小波折，注意沟通。'],
@@ -158,7 +198,11 @@ const pool: Record<string, PoolBucket> = {
         work: ['可能遇到阻碍，拆解问题再做。', '确认需求再行动。'],
         money: ['避免大额开支。', '注意小额骗局。'],
         health: ['注意休息，情绪管理重要。', '必要时寻求帮助。'],
-        tips: ['小心为上，别冒险尝试。', '遇到问题，多问一句人。']
+        tips: [
+            { file: "xiong (1).mp3", text: "今天要谨慎些，不要忽视小小的不适，认真对待它。" },
+            { file: "xiong (2).mp3", text: "如果觉得辛苦，不要独自承受，听听别人的声音吧。" },
+            { file: "xiong (3).mp3", text: "如果犹豫，不必急着给答案，花点时间慢慢想。" },
+        ]
     },
     daxiong: {
         summaries: ['状况较差，建议保守。', '遇事先留白，稳住情绪再处理。'],
@@ -166,7 +210,11 @@ const pool: Record<string, PoolBucket> = {
         work: ['不适合激进动作，先缓一缓。', '寻求他人协助更好。'],
         money: ['避免冲动消费、赌博。', '核对重要账务。'],
         health: ['适合静养，认真休息。', '不适及时就医。'],
-        tips: ['先保护自己，再考虑别的。', '求助并不是软弱.']
+        tips: [
+            { file: "daxiong (1).mp3", text: "今天尤其要小心行动，勉强可能会让小事变成大事。" },
+            { file: "daxiong (2).mp3", text: "如果觉得一个人扛不住，就不要犹豫寻求帮助，脆弱不是可耻的事。" },
+            { file: "daxiong (3).mp3", text: "首先把自己放在安全平静的地方，这样就会轻松一些。" },
+        ]
     }
 }
 
@@ -243,7 +291,8 @@ function randIndexByWeight(list: any[]) {
 function pickTypeKey() { return randIndexByWeight(types).key }
 
 function makeResult(typeKey: string) {
-    const bucket = pool[typeKey]
+    const bucket = pool[typeKey];
+    const tipObj = sample<TipItem>(bucket.tips);
     const res = {
         type: types.find(t => t.key === typeKey)!.label,
         typeClass: types.find(t => t.key === typeKey)!.cls,
@@ -252,10 +301,11 @@ function makeResult(typeKey: string) {
         work: sample(bucket.work),
         money: sample(bucket.money),
         health: sample(bucket.health),
-        tip: sample(bucket.tips),
+        tip: tipObj?.text || '',
+        tipFile: tipObj?.file || '',
         lucky: { item: sample(luckyPool.items), number: sample(luckyPool.numbers) }
-    }
-    return res
+    };
+    return res;
 }
 
 // 打字机效果
@@ -297,7 +347,11 @@ async function onDraw() {
     await typeTo('money', res.money, 18)
     await typeTo('health', res.health, 18)
     await typeTo('tip', res.tip, 20)
-
+    try {
+        if (res.tipFile) playVoice(res.tipFile);
+    } catch (e) {
+        console.warn('播放语音失败：', e);
+    }
     // 保存到本地
     saveToday(res)
     savedResult.value = res
@@ -549,7 +603,7 @@ async function onDraw() {
                 transform: rotateY(180deg);
                 display: flex;
                 flex-direction: column;
-
+                min-height:450px;
                 .back-top {
                     display: flex;
                     align-items: center;
@@ -612,7 +666,7 @@ async function onDraw() {
                         align-items: flex-start;
 
                         .label {
-                            width: 140px;
+                            width: 80px;
                             font-size: 14px;
                             color: #7a6254;
                             flex-shrink: 0;
@@ -644,6 +698,55 @@ async function onDraw() {
                             padding: 10px;
                             border-radius: 8px;
                             border: 1px solid rgba(199, 143, 123, 0.06);
+                        }
+
+                        .tip {
+                            display: block;
+                            width: 100%;
+                        }
+
+                        /* 内部容器，文本左侧，播放按钮右侧 */
+                        .tip-content {
+                            display: flex;
+                            align-items: flex-start;
+                            gap: 8px;
+                            width: 100%;
+                        }
+
+                        /* 文本主体：最多展示一定高度，超出滚动 */
+                        .tip-text {
+                            flex: 1 1 auto;
+                            max-height: 160px;
+                            /* 根据需要调整（120~160） */
+                            overflow-y: auto;
+                            -webkit-overflow-scrolling: touch;
+                            /* 更流畅的移动端惯性滚动 */
+                            white-space: pre-wrap;
+                            word-break: break-word;
+                            line-height: 1.5;
+                            padding-right: 4px;
+                        }
+
+                        /* 播放按钮样式 */
+                        .play-tip {
+                            flex: 0 0 auto;
+                            border: none;
+                            background: transparent;
+                            padding: 6px 8px;
+                            border-radius: 8px;
+                            cursor: pointer;
+                            font-size: 16px;
+                            color: #c97f7e;
+                            box-shadow: 0 2px 6px rgba(201, 127, 126, 0.12);
+                            transition: transform 0.12s ease, background 0.12s;
+                        }
+
+                        .play-tip:active {
+                            transform: scale(0.96);
+                        }
+
+                        .play-tip:focus {
+                            outline: 2px solid rgba(201, 127, 126, 0.18);
                         }
 
                         .lucky {
@@ -685,7 +788,7 @@ async function onDraw() {
                 /* 关键：绝对叠放（不占文档流），但不进行 rotateY */
                 position: absolute !important;
                 inset: 0;
-                padding: 12px;
+                padding: 0 12px;
                 gap: 10px;
                 backface-visibility: visible !important;
                 -webkit-backface-visibility: visible !important;
@@ -713,7 +816,6 @@ async function onDraw() {
                 opacity: 0;
                 pointer-events: none;
                 transition: opacity 320ms ease 80ms;
-                min-height: 500px;
             }
 
             /* 翻开：正面隐藏，背面显示（不会引起布局跳变） */
@@ -729,24 +831,6 @@ async function onDraw() {
                 z-index: 2;
             }
 
-            /* 竖向堆叠：标签在上内容在下，节省横向空间 */
-            .card-front .avatar-wrap {
-                width: 100%;
-            }
-
-            .card-back .back-top {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .card-back .back-body .row {
-                flex-direction: column;
-            }
-
-            .card-back .back-body .row .label {
-                width: auto;
-                margin-bottom: 6px;
-            }
 
             .card-back .extras {
                 flex-direction: column-reverse;
