@@ -275,7 +275,7 @@ function playVoice(name: string) {
 }
 
 let lastEggTime = 0; // 记录最后一次触发彩蛋的时间戳
-let coolDownPeriod = 3 * 60 * 1000; // 冷却3分钟（毫秒）
+let coolDownPeriod = 1 * 60 * 1000; // 冷却1分钟（毫秒）
 
 async function sendMessage() {
   if (!input.value.trim()) return;
@@ -309,7 +309,7 @@ async function sendMessage() {
     });
 
     // —— 鼓励彩蛋：5% 概率触发 ——
-    if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 1) {
+    if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 0.05) {
       // 随机挑一条
       const egg =
         encourageEggs[Math.floor(Math.random() * encourageEggs.length)];
