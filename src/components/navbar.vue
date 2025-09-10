@@ -16,6 +16,9 @@
         <li v-for="item in links" :key="item.name" @click="onLinkClick">
           <router-link :to="item.path" class="link">{{ item.name }}</router-link>
         </li>
+        <li>
+          <a href="http://slty.site/#/redirector" target="_blank" class="link">总站</a>
+        </li>
       </ul>
     </div>
   </nav>
@@ -42,6 +45,7 @@ const links = [
   { name: "惠の私语对话", path: "/talk" },
   { name: "另一个世界线", path: "/story" },
   { name: "惠の占卜", path: "/luck" },
+  { name: "资源分享", path: "/resources" },
 ];
 
 
@@ -83,7 +87,7 @@ $text-active: #784f57;
   }
 
   &__container {
-    max-width: 1200px;
+    
     margin: 0 auto;
     display: flex;
     align-items: center;

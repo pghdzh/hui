@@ -1,5 +1,8 @@
 <template>
   <div class="chat-page">
+    <button class="random-voice-btn" @click="playRandomAudio">
+      随机语音🔉
+    </button>
     <div class="chat-container">
       <!-- 统计面板（放在聊天容器顶部） -->
       <div class="stats-panel">
@@ -248,9 +251,26 @@ const encourageEggs = [
   { file: "audio (12).mp3", text: "大家真是有着各种各样的颜色呢。我觉得你有时候是有点过于耀眼的颜色，而我呢…呃，是什么颜色呢？大概，是有点朴素的颜色吧。" },
   { file: "audio (13).mp3", text: "好想再买顶帽子啊。因为想像那天一样，在不被任何人发现的情况下看看你的样子。…开玩笑的，我怎么可能做那种事呢？" },
 ];
+// 新增：点击“随机语音”按钮时调用
+function playRandomAudio() {
+  // 随机选一条
+  const idx = Math.floor(Math.random() * encourageEggs.length);
+  const { file, text } = encourageEggs[idx];
+
+  // 播放音频
+  playVoice(file);
+
+  // 将文字插入到 chatLog（不调用后端）
+  chatLog.value.push({
+    id: Date.now() + 3,
+    role: "bot",
+    text: `<p style="color: #ffb3c1; font-style: italic;">${text}</p>`,
+    isEgg: true,
+  });
+}
 
 function playVoice(name: string) {
-  const audio = new Audio(`/voice/${name}.mp3`);
+  const audio = new Audio(`/voice/${name}`);
   audio.play().catch((e) => console.warn("音频播放失败：", e));
 }
 
@@ -289,12 +309,12 @@ async function sendMessage() {
     });
 
     // —— 鼓励彩蛋：5% 概率触发 ——
-    if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 0.05) {
+    if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 1) {
       // 随机挑一条
       const egg =
         encourageEggs[Math.floor(Math.random() * encourageEggs.length)];
       // 播放对应语音（不带 .mp3 后缀）
-      playVoice(egg.file.replace(".mp3", ""));
+      playVoice(egg.file);
       // 推入带标记的彩蛋消息
       chatLog.value.push({
         id: Date.now() + 2,
@@ -310,7 +330,7 @@ async function sendMessage() {
     chatLog.value.push({
       id: Date.now() + 2,
       role: "bot",
-      text:"API余额耗尽了，去b站提醒我充钱吧",
+      text: "API余额耗尽了，去b站提醒我充钱吧",
       isError: true,
     });
   } finally {
@@ -397,6 +417,44 @@ onBeforeUnmount(() => {
   color: #5b463f;
   display: flex;
   flex-direction: column;
+
+  /* 修改：按钮更贴合页面风格，半透明玻璃质感 + 边框光晕 */
+  .random-voice-btn {
+    position: fixed;
+    right: 0;
+    top: 70px;
+    z-index: 10;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 10px 14px;
+    border-radius: 24px;
+    border: 1px solid #ff89cf;
+    /* 强调粉边框 */
+
+    /* 浅粉到更浅粉的渐变，和页面底色协调但有对比 */
+    background: linear-gradient(180deg, #ffdbe6 0%, #fff1f4 100%);
+    backdrop-filter: blur(6px);
+
+    box-shadow: 0 8px 20px rgba(255, 137, 207, 0.12);
+    color: #4b2430;
+    /* 深暖色文字，保证可读性 */
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+
+  /* Hover（上浮 + 微放大）*/
+  .random-voice-btn:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 18px 36px rgba(255, 137, 207, 0.16);
+    background: linear-gradient(180deg, #ffecf3 0%, #ffeaf6 100%);
+  }
 
   .chat-container {
     flex: 1;
@@ -496,7 +554,7 @@ onBeforeUnmount(() => {
       box-shadow: 0 6px 18px rgba(209, 107, 165, 0.08);
     }
 
-    
+
     /* 彩蛋消息样式 - 粉红色主题 */
     &.egg .bubble {
       background: rgba(255, 179, 193, 0.15);
@@ -904,6 +962,7 @@ onBeforeUnmount(() => {
     .chat-container {
       width: 100%;
       padding: 6px;
+      padding-top: 20px;
 
       .stats-panel {
         display: none;

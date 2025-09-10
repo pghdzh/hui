@@ -34,6 +34,10 @@ const router = createRouter({
       path: "/luck",
       component: () => import("@/views/luckView/index.vue"),
     },
+    {
+      path: "/resources",
+      component: () => import("@/views/resourcesView/index.vue"),
+    },
   ],
   scrollBehavior() {
     return { top: 0 };
