@@ -27,8 +27,15 @@
       </div>
       <div class="messages" ref="msgList">
         <transition-group name="msg" tag="div">
-          <div v-for="msg in chatLog" :key="msg.id"
-            :class="['message', msg.role, { error: msg.isError, egg: msg.isEgg }]">
+          <div
+            v-for="msg in chatLog"
+            :key="msg.id"
+            :class="[
+              'message',
+              msg.role,
+              { error: msg.isError, egg: msg.isEgg },
+            ]"
+          >
             <div class="avatar" :class="msg.role"></div>
             <div class="bubble">
               <div class="content" v-html="msg.text"></div>
@@ -49,22 +56,43 @@
       </div>
       <form class="input-area" @submit.prevent="sendMessage">
         <!-- 输入框改成 textarea -->
-        <textarea v-model="input" placeholder="向惠提问…" :disabled="loading" @keydown="handleKeydown" rows="1"></textarea>
+        <textarea
+          v-model="input"
+          placeholder="向惠提问…"
+          :disabled="loading"
+          @keydown="handleKeydown"
+          rows="1"
+        ></textarea>
 
         <!-- 清空按钮 -->
         <div class="btn-group">
-          <button type="button" class="clear-btn" @click="clearChat" :disabled="loading" title="清空对话">
+          <button
+            type="button"
+            class="clear-btn"
+            @click="clearChat"
+            :disabled="loading"
+            title="清空对话"
+          >
             ✖
           </button>
         </div>
 
         <!-- 发送按钮 -->
-        <button type="submit" class="send-btn" :disabled="!input.trim() || loading">
+        <button
+          type="submit"
+          class="send-btn"
+          :disabled="!input.trim() || loading"
+        >
           发送
         </button>
 
         <!-- 统计数据按钮 -->
-        <button type="button" class="Alldetail-btn" @click="showModal = true" title="查看统计">
+        <button
+          type="button"
+          class="Alldetail-btn"
+          @click="showModal = true"
+          title="查看统计"
+        >
           统计数据
         </button>
       </form>
@@ -236,20 +264,62 @@ const loading = ref(false);
 const msgList = ref<HTMLElement>();
 
 const encourageEggs = [
-  { file: "audio (0).mp3", text: "今天的天气真好啊。忽然间，我就有点想和你一起去散散步呢。咦？我说这种话很罕见吗？嗯…没什么…只是一时心血来潮而已哦。" },
-  { file: "audio (1).mp3", text: "那个啊，我像这样和你说话的时候，其实觉得是非常特别的时光哦。…咦？你说我不太说这种话？正因为如此，偶尔才必须说出来呢。" },
-  { file: "audio (2).mp3", text: "和你说话的时候，渐渐地连我这边好像也变得话多起来了呢。这也是你的魔力吗？…也许吧。" },
-  { file: "audio (3).mp3", text: "我觉得这个世界啊，说到底‘不经意间的小事’的积累才是最重要的。人生并不全是盛大华丽的事件呢。…比如说，像现在这样和你说话的瞬间，也是其中之一哦。" },
-  { file: "audio (4).mp3", text: "哎呀？难道说刚才，你心里咯噔了一下？呵呵，不知为什么我就能想象出你慌张的表情呢。我原来是这种会做这种事的角色吗？" },
-  { file: "audio (5).mp3", text: "和我说话的时候，你总会不小心说出太多真心话呢。这说不定是我的特殊能力哦。…咦？你说那只是单纯的天然呆？是那样吗~" },
-  { file: "audio (6).mp3", text: "捉弄你一下总觉得有点有趣呢。不过，你之后那害羞的表情我也喜欢哦。…没、没什么。刚才的就请当没听见吧。" },
-  { file: "audio (7).mp3", text: "今天声音的语调有点低呢。发生什么了吗？如果不想说也不用勉强哦。我只是，想着至少要问一下你。" },
-  { file: "audio (8).mp3", text: "你的喜好，我大概觉得自己是了解的。因为，留意这些细节，好像也是我的职责之一似的。…什么？没什么哦。" },
-  { file: "audio (9).mp3", text: "没关系吗？不用勉强自己笑哦。其实有点累了吧？这里没有别人，所以稍微发泄一下也没关系哦？" },
-  { file: "audio (10).mp3", text: "回过神来才发现，不知何时起待在你身边的情况变多了呢。这种感觉，真有点不可思议。就好像是理所当然一样。" },
-  { file: "audio (11).mp3", text: "经常有人说‘要读空气（察言观色）’，但我觉得空气不是用来‘读’的，而是用来‘感受’的。…啊，刚才的，是不是有点太耍帅了？" },
-  { file: "audio (12).mp3", text: "大家真是有着各种各样的颜色呢。我觉得你有时候是有点过于耀眼的颜色，而我呢…呃，是什么颜色呢？大概，是有点朴素的颜色吧。" },
-  { file: "audio (13).mp3", text: "好想再买顶帽子啊。因为想像那天一样，在不被任何人发现的情况下看看你的样子。…开玩笑的，我怎么可能做那种事呢？" },
+  {
+    file: "audio (0).mp3",
+    text: "今天的天气真好啊。忽然间，我就有点想和你一起去散散步呢。咦？我说这种话很罕见吗？嗯…没什么…只是一时心血来潮而已哦。",
+  },
+  {
+    file: "audio (1).mp3",
+    text: "那个啊，我像这样和你说话的时候，其实觉得是非常特别的时光哦。…咦？你说我不太说这种话？正因为如此，偶尔才必须说出来呢。",
+  },
+  {
+    file: "audio (2).mp3",
+    text: "和你说话的时候，渐渐地连我这边好像也变得话多起来了呢。这也是你的魔力吗？…也许吧。",
+  },
+  {
+    file: "audio (3).mp3",
+    text: "我觉得这个世界啊，说到底‘不经意间的小事’的积累才是最重要的。人生并不全是盛大华丽的事件呢。…比如说，像现在这样和你说话的瞬间，也是其中之一哦。",
+  },
+  {
+    file: "audio (4).mp3",
+    text: "哎呀？难道说刚才，你心里咯噔了一下？呵呵，不知为什么我就能想象出你慌张的表情呢。我原来是这种会做这种事的角色吗？",
+  },
+  {
+    file: "audio (5).mp3",
+    text: "和我说话的时候，你总会不小心说出太多真心话呢。这说不定是我的特殊能力哦。…咦？你说那只是单纯的天然呆？是那样吗~",
+  },
+  {
+    file: "audio (6).mp3",
+    text: "捉弄你一下总觉得有点有趣呢。不过，你之后那害羞的表情我也喜欢哦。…没、没什么。刚才的就请当没听见吧。",
+  },
+  {
+    file: "audio (7).mp3",
+    text: "今天声音的语调有点低呢。发生什么了吗？如果不想说也不用勉强哦。我只是，想着至少要问一下你。",
+  },
+  {
+    file: "audio (8).mp3",
+    text: "你的喜好，我大概觉得自己是了解的。因为，留意这些细节，好像也是我的职责之一似的。…什么？没什么哦。",
+  },
+  {
+    file: "audio (9).mp3",
+    text: "没关系吗？不用勉强自己笑哦。其实有点累了吧？这里没有别人，所以稍微发泄一下也没关系哦？",
+  },
+  {
+    file: "audio (10).mp3",
+    text: "回过神来才发现，不知何时起待在你身边的情况变多了呢。这种感觉，真有点不可思议。就好像是理所当然一样。",
+  },
+  {
+    file: "audio (11).mp3",
+    text: "经常有人说‘要读空气（察言观色）’，但我觉得空气不是用来‘读’的，而是用来‘感受’的。…啊，刚才的，是不是有点太耍帅了？",
+  },
+  {
+    file: "audio (12).mp3",
+    text: "大家真是有着各种各样的颜色呢。我觉得你有时候是有点过于耀眼的颜色，而我呢…呃，是什么颜色呢？大概，是有点朴素的颜色吧。",
+  },
+  {
+    file: "audio (13).mp3",
+    text: "好想再买顶帽子啊。因为想像那天一样，在不被任何人发现的情况下看看你的样子。…开玩笑的，我怎么可能做那种事呢？",
+  },
 ];
 // 新增：点击“随机语音”按钮时调用
 function playRandomAudio() {
@@ -302,37 +372,40 @@ async function sendMessage() {
     //  throw new Error("测试错误");
     const history = chatLog.value.filter((msg) => !msg.isEgg && !msg.isError);
     const botReply = await sendMessageToHui(userText, history);
-    chatLog.value.push({
-      id: Date.now() + 1,
-      role: "bot",
-      text: botReply,
-    });
-
-    // —— 鼓励彩蛋：5% 概率触发 ——
-    if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 0.05) {
-      // 随机挑一条
-      const egg =
-        encourageEggs[Math.floor(Math.random() * encourageEggs.length)];
-      // 播放对应语音（不带 .mp3 后缀）
-      playVoice(egg.file);
-      // 推入带标记的彩蛋消息
+    if (botReply == "error") {
       chatLog.value.push({
         id: Date.now() + 2,
         role: "bot",
-        text: `<p style="color: #ffb3c1; font-style: italic;">${egg.text}</p>`,
-        isEgg: true,
+        text: "API余额耗尽了，去b站提醒我充钱吧",
+        isError: true,
       });
-      lastEggTime = Date.now();
+    } else {
+      chatLog.value.push({
+        id: Date.now() + 1,
+        role: "bot",
+        text: botReply,
+      });
+      // —— 鼓励彩蛋：5% 概率触发 ——
+      if (Date.now() - lastEggTime > coolDownPeriod && Math.random() < 0.05) {
+        // 随机挑一条
+        const egg =
+          encourageEggs[Math.floor(Math.random() * encourageEggs.length)];
+        // 播放对应语音（不带 .mp3 后缀）
+        playVoice(egg.file);
+        // 推入带标记的彩蛋消息
+        chatLog.value.push({
+          id: Date.now() + 2,
+          role: "bot",
+          text: `<p style="color: #ffb3c1; font-style: italic;">${egg.text}</p>`,
+          isEgg: true,
+        });
+        lastEggTime = Date.now();
+      }
+      // —— 彩蛋结束 ——
     }
-    // —— 彩蛋结束 ——
   } catch (e) {
     console.error(e);
-    chatLog.value.push({
-      id: Date.now() + 2,
-      role: "bot",
-      text: "API余额耗尽了，去b站提醒我充钱吧",
-      isError: true,
-    });
+  
   } finally {
     loading.value = false;
     await scrollToBottom();
@@ -410,10 +483,12 @@ onBeforeUnmount(() => {
   padding-top: 64px;
   min-height: 100vh;
   background-color: #fff6f9;
-  background-image: linear-gradient(145deg,
-      #fff6f9 0%,
-      #fff1f4 40%,
-      #eef6fb 100%);
+  background-image: linear-gradient(
+    145deg,
+    #fff6f9 0%,
+    #fff1f4 40%,
+    #eef6fb 100%
+  );
   color: #5b463f;
   display: flex;
   flex-direction: column;
@@ -444,10 +519,10 @@ onBeforeUnmount(() => {
     font-weight: 600;
     font-size: 14px;
     cursor: pointer;
-    transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    transition: transform 0.18s ease, box-shadow 0.18s ease,
+      background 0.18s ease;
     -webkit-tap-highlight-color: transparent;
   }
-
 
   /* Hover（上浮 + 微放大）*/
   .random-voice-btn:hover {
@@ -554,7 +629,6 @@ onBeforeUnmount(() => {
       box-shadow: 0 6px 18px rgba(209, 107, 165, 0.08);
     }
 
-
     /* 彩蛋消息样式 - 粉红色主题 */
     &.egg .bubble {
       background: rgba(255, 179, 193, 0.15);
@@ -564,7 +638,6 @@ onBeforeUnmount(() => {
       box-shadow: 0 6px 18px rgba(255, 179, 193, 0.12);
       transition: all 0.3s ease;
     }
-
 
     .avatar {
       width: 48px;
@@ -620,17 +693,21 @@ onBeforeUnmount(() => {
       /* bot 消息 — 微妙的左侧“尾巴”视觉（通过圆角处理）*/
       .message.bot & {
         border-radius: 16px 16px 16px 6px;
-        background: linear-gradient(135deg,
-            rgba(255, 247, 242, 0.95),
-            rgba(255, 236, 238, 0.88));
+        background: linear-gradient(
+          135deg,
+          rgba(255, 247, 242, 0.95),
+          rgba(255, 236, 238, 0.88)
+        );
       }
 
       /* user 消息 — 右侧“尾巴” */
       .message.user & {
         border-radius: 16px 16px 6px 16px;
-        background: linear-gradient(135deg,
-            rgba(255, 247, 242, 0.95),
-            rgba(252, 241, 238, 0.92));
+        background: linear-gradient(
+          135deg,
+          rgba(255, 247, 242, 0.95),
+          rgba(252, 241, 238, 0.92)
+        );
       }
 
       .dots {
@@ -657,7 +734,6 @@ onBeforeUnmount(() => {
         }
 
         @keyframes blink {
-
           0%,
           100% {
             opacity: 0;
@@ -839,8 +915,7 @@ onBeforeUnmount(() => {
       color: #5b463f;
       /* 暖棕文字 */
       box-shadow: 0 10px 30px rgba(90, 70, 60, 0.12),
-        /* 柔和投影 */
-        inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        /* 柔和投影 */ inset 0 1px 0 rgba(255, 255, 255, 0.7);
       /* 纸张高光 */
       border: 1px solid rgba(199, 143, 123, 0.22);
       /* 细腻边框 */
